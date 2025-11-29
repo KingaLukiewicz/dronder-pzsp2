@@ -32,7 +32,7 @@ export default function Log() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Something went wrong");
+        setError("Coś poszło nie tak.");
       }
     }
   };
