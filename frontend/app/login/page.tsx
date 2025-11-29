@@ -28,6 +28,7 @@ export default function Log() {
       if (!res.ok) {
         throw new Error("Błędny email lub hasło");
       }
+      alert("Zostałeś zalogowany!"); // remove in next stages
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
