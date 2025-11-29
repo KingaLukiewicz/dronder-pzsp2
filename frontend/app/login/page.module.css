@@ -79,6 +79,7 @@ body {
 }
 
 .appLogo {
+  position: relative;
   opacity: 100%;
   width: 35vh;
   height: 35vh;
