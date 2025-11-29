@@ -6,9 +6,30 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
 export default function Log() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  const handleLogin = async () => {
+    setError(null); // Clear previous errors
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/auth/login", {
+        // replace with "http://backend:5000/auth/login" when running on docker
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Błędny email lub hasło");
+      }
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    }
+  };
 
   return (
     <div className={styles.LogContainer}>
@@ -33,10 +54,10 @@ export default function Log() {
         <TextField
           className={styles.Input}
           id="outlined-basic"
-          label="login"
+          label="email"
           variant="outlined"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextField
           className={styles.Input}
@@ -55,6 +76,7 @@ export default function Log() {
         <Button
           className={styles.RightButton}
           sx={{ textTransform: "none !important" }}
+          onClick={handleLogin}
         >
           Zaloguj
         </Button>
