@@ -74,7 +74,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  padding-top: 20vh;
+  padding-top: 10vh;
   position: relative;
   right: -4vw;
   transition: transform 1s ease, opacity 1s ease;
@@ -127,4 +127,12 @@ body {
   cursor: pointer;
   width: 20px;
   height: 20px;
+}
+
+.appLogo {
+  position: relative;
+  opacity: 100%;
+  width: 20vh;
+  height: 20vh;
+  margin-bottom: 4vh;
 }

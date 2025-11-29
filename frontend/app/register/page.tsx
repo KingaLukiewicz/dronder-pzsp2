@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Image from "next/image";
 
 export default function Register() {
   const [first_name, setFirstName] = useState("");
@@ -74,6 +75,14 @@ export default function Register() {
     <div className={styles.RegisterContainer}>
       <div className={styles.RightBox} />
       <div className={styles.RegisterLeft}>
+        <div className={styles.appLogo}>
+          <Image
+            src="/dronder_logo.png"
+            alt="App logo"
+            fill
+            style={{ objectFit: "contain" }} // or "cover"
+          />
+        </div>
         <TextField
           className={styles.Input}
           label="imię"
