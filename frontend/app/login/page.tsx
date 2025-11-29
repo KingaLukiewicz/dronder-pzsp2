@@ -4,12 +4,13 @@ import { useState } from "react";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default function Log() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
     setError(null); // Clear previous errors
@@ -27,8 +28,12 @@ export default function Log() {
       if (!res.ok) {
         throw new Error("Błędny email lub hasło");
       }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
@@ -52,11 +57,14 @@ export default function Log() {
         </Button>
       </div>
       <div className={styles.LogRight}>
-        <img
-          className={styles.appLogo}
-          src="/dronder_logo.png"
-          alt="App logo"
-        />
+        <div className={styles.appLogo}>
+          <Image
+            src="/dronder_logo.png"
+            alt="App logo"
+            fill
+            style={{ objectFit: "contain" }} // or "cover"
+          />
+        </div>
         <TextField
           className={styles.Input}
           id="outlined-basic"
