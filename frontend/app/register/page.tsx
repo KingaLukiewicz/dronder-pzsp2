@@ -12,6 +12,12 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [re_password, setRePassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [rePasswordVisible, setRePasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
+  const toggleRePasswordVisibility = () =>
+    setRePasswordVisible(!rePasswordVisible);
 
   return (
     <div className={styles.RegisterContainer}>
@@ -38,22 +44,48 @@ export default function Register() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <TextField
-          className={styles.Input}
-          label="hasło"
-          variant="outlined"
-          type={"password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <TextField
-          className={styles.Input}
-          label="ponów hasło"
-          variant="outlined"
-          type={"password"}
-          value={re_password}
-          onChange={(e) => setRePassword(e.target.value)}
-        />
+        <div className={styles.PasswordContainer}>
+          <TextField
+            className={styles.Input}
+            label="hasło"
+            variant="outlined"
+            type={passwordVisible ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <img
+            src={
+              passwordVisible
+                ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
+                : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
+            }
+            alt="toggle visibility"
+            className={styles.PasswordToggle}
+            onClick={togglePasswordVisibility}
+          />
+        </div>
+
+        <div className={styles.PasswordContainer}>
+          <TextField
+            className={styles.Input}
+            label="ponów hasło"
+            variant="outlined"
+            type={rePasswordVisible ? "text" : "password"}
+            value={re_password}
+            onChange={(e) => setRePassword(e.target.value)}
+          />
+          <img
+            src={
+              rePasswordVisible
+                ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
+                : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
+            }
+            alt="toggle visibility"
+            className={styles.PasswordToggle}
+            onClick={toggleRePasswordVisibility}
+          />
+        </div>
+
         {error && <p className={styles.ErrorText}>{error}</p>}
 
         <Button
