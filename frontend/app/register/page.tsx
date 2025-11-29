@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -63,6 +64,10 @@ export default function Register() {
         setError("Coś poszło nie tak.");
       }
     }
+  };
+
+  const handleGoLogin = async () => {
+    redirect("/login");
   };
 
   return (
@@ -150,6 +155,7 @@ export default function Register() {
           className={styles.RightButton}
           variant="outlined"
           sx={{ textTransform: "none !important" }}
+          onClick={handleGoLogin}
         >
           Zaloguj się!
         </Button>
