@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { redirect } from "next/navigation";
 
 export default function Log() {
   const [email, setEmail] = useState("");
@@ -31,6 +32,10 @@ export default function Log() {
     }
   };
 
+  const handleGoRegister = async () => {
+    redirect("/register");
+  };
+
   return (
     <div className={styles.LogContainer}>
       <div className={styles.LeftBox} />
@@ -41,6 +46,7 @@ export default function Log() {
           className={styles.LeftButton}
           variant="outlined"
           sx={{ textTransform: "none !important" }}
+          onClick={handleGoRegister}
         >
           Zarejestruj się!
         </Button>
