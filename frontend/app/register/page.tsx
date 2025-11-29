@@ -19,6 +19,52 @@ export default function Register() {
   const toggleRePasswordVisibility = () =>
     setRePasswordVisible(!rePasswordVisible);
 
+  const handleRegister = async () => {
+    setError(null);
+
+    if (!first_name || !last_name || !password || !re_password) {
+      setError("Wszystkie pola są wymagane.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/auth/register", {
+        // podmienić 127.0.0.1:5000 na backend:5000 dla dockera
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          first_name,
+          last_name,
+          password,
+          re_password,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+
+        if (
+          errorData.errors &&
+          Array.isArray(errorData.errors) &&
+          errorData.errors.length > 0
+        ) {
+          throw new Error(errorData.errors[0].message);
+        }
+
+        throw new Error(errorData.message || "Rejestracja nie powiodła się.");
+      }
+
+      alert("Rejestracja udana! Zaloguj się.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Coś poszło nie tak.");
+      }
+    }
+  };
+
   return (
     <div className={styles.RegisterContainer}>
       <div className={styles.RightBox} />
@@ -91,6 +137,7 @@ export default function Register() {
         <Button
           className={styles.LeftButton}
           sx={{ textTransform: "none !important" }}
+          onClick={handleRegister}
         >
           Zarejestruj
         </Button>
