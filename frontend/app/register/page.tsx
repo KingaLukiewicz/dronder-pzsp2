@@ -44,17 +44,13 @@ export default function Register() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errors = await res.json();
 
-        if (
-          errorData.errors &&
-          Array.isArray(errorData.errors) &&
-          errorData.errors.length > 0
-        ) {
-          throw new Error(errorData.errors[0].message);
+        if (errors && Array.isArray(errors) && errors.length > 0) {
+          throw new Error(errors[0].msg);
         }
 
-        throw new Error(errorData.message || "Rejestracja nie powiodła się.");
+        throw new Error(errors.msg || "Rejestracja nie powiodła się.");
       }
 
       alert("Rejestracja udana! Zaloguj się.");
