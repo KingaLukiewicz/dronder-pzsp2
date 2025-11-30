@@ -40,8 +40,7 @@ class RegisterForm(BaseModel):
                 input=self,
                 ctx={"reason": "Passwords do not match"},
             )
-            raise ValidationError.from_exception_data(
-                self.__class__.__name__, [error])
+            raise ValidationError.from_exception_data(self.__class__.__name__, [error])
         return self
 
 
@@ -77,13 +76,25 @@ def register_user():
         db.session.add(user)
         db.session.commit()
         db.session.refresh(user)
-    except IntegrityError as e:
-        return jsonify(
-            {
-                "error": "IntegrityError",
-                "message": str(e.orig),
-            }
-        ), HTTPStatus.BAD_REQUEST
+    except IntegrityError:
+        error = pydantic_core.InitErrorDetails(
+            type=pydantic_core.PydanticCustomError(
+                "integrity_error",
+                "Account with provided email already exists",
+                {"reason": "Account with provided email already exists"},
+            ),
+            loc=("email",),
+            input=form,
+            ctx={"reason": "Account with provided email already exists"},
+        )
+
+        return Response(
+            ValidationError.from_exception_data("register_user", [error]).json(
+                include_input=False
+            ),
+            status=HTTPStatus.BAD_REQUEST,
+            mimetype="application/json",
+        )
     return jsonify(user.model_dump()), HTTPStatus.CREATED
 
 
@@ -108,8 +119,7 @@ def login_user():
             mimetype="application/json",
         )
 
-    user = db.session.scalars(
-        select(User).filter_by(email=form.email)).one_or_none()
+    user = db.session.scalars(select(User).filter_by(email=form.email)).one_or_none()
 
     if user is None:
         return "User doen't exists", HTTPStatus.NOT_FOUND
