@@ -33,6 +33,7 @@ jobs:
         uv tool install flake8
         uv tool install mypy
         uv sync --locked --all-extras --dev
+        uv run mypy --install-types
       
     - name: Lint with flake8
       working-directory: ./backend
