@@ -76,7 +76,7 @@ export default function Register() {
             src="/dronder_logo.png"
             alt="App logo"
             fill
-            style={{ objectFit: "contain" }} // or "cover"
+            style={{ objectFit: "contain" }}
           />
         </div>
         <TextField
@@ -109,16 +109,19 @@ export default function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <img
-            src={
-              passwordVisible
-                ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
-                : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
-            }
-            alt="toggle visibility"
-            className={styles.PasswordToggle}
-            onClick={togglePasswordVisibility}
-          />
+          <div className={styles.PasswordToggle}>
+            <Image
+              src={
+                passwordVisible
+                  ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
+                  : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
+              }
+              alt="toggle visibility"
+              fill
+              style={{ objectFit: "contain" }}
+              onClick={togglePasswordVisibility}
+            />
+          </div>
         </div>
 
         <div className={styles.PasswordContainer}>
@@ -130,16 +133,19 @@ export default function Register() {
             value={re_password}
             onChange={(e) => setRePassword(e.target.value)}
           />
-          <img
-            src={
-              rePasswordVisible
-                ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
-                : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
-            }
-            alt="toggle visibility"
-            className={styles.PasswordToggle}
-            onClick={toggleRePasswordVisibility}
-          />
+          <div className={styles.PasswordToggle}>
+            <Image
+              src={
+                rePasswordVisible
+                  ? "https://img.icons8.com/fluency-systems-regular/48/visible--v1.png"
+                  : "https://img.icons8.com/fluency-systems-regular/48/hide.png"
+              }
+              alt="toggle visibility"
+              fill
+              style={{ objectFit: "contain" }}
+              onClick={toggleRePasswordVisibility}
+            />
+          </div>
         </div>
 
         {error && <p className={styles.ErrorText}>{error}</p>}
