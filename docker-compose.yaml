@@ -33,7 +33,8 @@ services:
     container_name: database
     volumes:
       - postgres_data:/var/lib/postgresql
-      - ./db/create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
+      - ./database/01_create_schema.sql:/docker-entrypoint-initdb.d/01_create_schema.sql
+      - ./database/02_insert_data.sql:/docker-entrypoint-initdb.d/02_insert_data.sql
     env_file:
       - .env
     environment:
