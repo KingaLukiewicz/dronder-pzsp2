@@ -21,6 +21,13 @@ CREATE TABLE IF NOT EXISTS public."Locations"
     geo_latitude numeric(9,6),
     radius bigint,
     address text
+
+    CONSTRAINT check_locations
+    CHECK (
+        address IS NOT NULL
+        OR
+        (geo_longitude IS NOT NULL AND geo_latitude IS NOT NULL AND radius IS NOT NULL)
+    )
 );
 
 CREATE TABLE IF NOT EXISTS public."Available_Weekdays"
@@ -65,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public."Offers"
     flight_date date,
     operator_rating smallint CHECK (operator_rating BETWEEN 1 AND 5),
     operator_review text,
-    client_rating smallint CHECK (client_rating BETWEEN 1 AND 5)
+    client_rating smallint CHECK (client_rating BETWEEN 1 AND 5),
     client_review text
 );
 
@@ -198,15 +205,5 @@ ALTER TABLE IF EXISTS public."Type_Parameters"
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Locations"
-ADD CONSTRAINT check_locations
-CHECK (
-    address IS NOT NULL
-    OR
-    (geo_longitude IS NOT NULL AND geo_latitude IS NOT NULL AND radius IS NOT NULL)
-);
-
 
 END;
