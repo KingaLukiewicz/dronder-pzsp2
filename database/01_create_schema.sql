@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public."Users"
     email text NOT NULL,
     username text NOT NULL,
     password text NOT NULL,
-    phone_number integer NOT NULL,
+    phone_number text NOT NULL,
     location_id bigint,
     group_id bigint NOT NULL
 );
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS public."Users"
 CREATE TABLE IF NOT EXISTS public."Locations"
 (
     location_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    geo_longitude double precision,
-    geo_latitude double precision,
+    geo_longitude numeric(9,6),
+    geo_latitude numeric(9,6),
     radius bigint,
     address text
 );
@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS public."Offers"
     status text NOT NULL,
     format text,
     flight_date date,
-    operator_rating bigint,
+    operator_rating smallint CHECK (operator_rating BETWEEN 1 AND 5),
     operator_review text,
-    client_rating bigint,
+    client_rating smallint CHECK (client_rating BETWEEN 1 AND 5)
     client_review text
 );
 
@@ -198,5 +198,15 @@ ALTER TABLE IF EXISTS public."Type_Parameters"
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Locations"
+ADD CONSTRAINT check_locations
+CHECK (
+    address IS NOT NULL
+    OR
+    (geo_longitude IS NOT NULL AND geo_latitude IS NOT NULL AND radius IS NOT NULL)
+);
+
 
 END;

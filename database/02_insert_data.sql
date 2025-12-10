@@ -22,8 +22,8 @@ INSERT INTO public."Offer_Types" (name) VALUES
 
 INSERT INTO public."Parameters" (name) VALUES
 ('GSD'),
-('georeferencja zdjęć(nic/RTK/GPS)'),
-('pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)'),
+('georeferencja zdjęć'),
+('pomiary fotopunktów'),
 ('gęstość punktów na m2'),
 ('NMT/NMPT'),
 ('kolorowa/czarno-biała'),
@@ -35,30 +35,30 @@ INSERT INTO public."Parameters" (name) VALUES
 
 INSERT INTO public."Type_Parameters" (type_name, parameter_name) VALUES
 ('Ortofotomapa', 'GSD'),
-('Ortofotomapa', 'georeferencja zdjęć(nic/RTK/GPS)'),
-('Ortofotomapa', 'pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)'),
+('Ortofotomapa', 'georeferencja zdjęć'),
+('Ortofotomapa', 'pomiary fotopunktów'),
 ('Ortofotomapa', 'format obrazu'),                                                                      -- geotiff, jpeg, png
 --
 ('Numeryczne', 'GSD'),
-('Numeryczne', 'georeferencja zdjęć(nic/RTK/GPS)'),
-('Numeryczne', 'pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)'),
+('Numeryczne', 'georeferencja zdjęć'),
+('Numeryczne', 'pomiary fotopunktów'),
 ('Numeryczne', 'NMT/NMPT'),
-('Numeryczne', 'format obrazu'),                                                                        --geotiff, jpeg, png
+('Numeryczne', 'format obrazu'),                                                                        -- geotiff, jpeg, png
 --
-('Chmura punktów', 'georeferencja zdjęć(nic/RTK/GPS)'),
-('Chmura punktów', 'pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)'),
+('Chmura punktów', 'georeferencja zdjęć'),
+('Chmura punktów', 'pomiary fotopunktów'),
 ('Chmura punktów', 'gęstość punktów na m2'),
 ('Chmura punktów', 'kolorowa/czarno-biała'),
 ('Chmura punktów', 'sklasyfikowana/niesklasyfikowana'),
 ('Chmura punktów', 'format obrazu'),                                                                    -- obj, laz, pcd, txt, ply
 --
-('Modele mesh 3D', 'pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)'),
+('Modele mesh 3D', 'pomiary fotopunktów'),
 ('Modele mesh 3D', 'kolorowa/czarno-biała'),
 ('Modele mesh 3D', 'rozdzielczość siatki'),
 ('Modele mesh 3D', 'ilość płaszczyzn'),
 ('Modele mesh 3D', 'format obrazu'),                                                                    -- .obj, 3ds, stl, ply, fbx
 --
-('Skaning laserowy', 'georeferencja zdjęć(nic/RTK/GPS)'),                                               -- RTK
+('Skaning laserowy', 'georeferencja zdjęć'),                                               -- RTK
 ('Skaning laserowy', 'gęstość punktów na m2'),
 ('Skaning laserowy', 'kolorowa/czarno-biała'),
 ('Skaning laserowy', 'sklasyfikowana/niesklasyfikowana'),
@@ -66,8 +66,10 @@ INSERT INTO public."Type_Parameters" (type_name, parameter_name) VALUES
 
 
 INSERT INTO public."Groups" (client, operator, admin) VALUES
+(False, False, True),
 (False, True, False),
-(True, False, False);
+(True, False, False),
+(True, True, False);
 
 
 INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VALUES
@@ -76,8 +78,8 @@ INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VA
 
 
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
-('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 1),                   -- operator
-('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 2);                 -- client
+('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 2),                   -- operator
+('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 3);                 -- client
 
 
 INSERT INTO public."Available_Weekdays" (weekday, operator_id) VALUES
@@ -106,8 +108,8 @@ VALUES(
 
 INSERT INTO public."Offer_Parameters" (offer_id, parameter_id, value) VALUES
 (1, 'GSD', '2 cm'),
-(1, 'georeferencja zdjęć(nic/RTK/GPS)', 'RTK'),
-(1, 'pomiary fotopunktów  (nie/tak/tak z określoną  liczbą fotopunktów)', 'tak, 8 fotopunktów'),
+(1, 'georeferencja zdjęć', 'RTK'),
+(1, 'pomiary fotopunktów', 'tak, 8 fotopunktów'),
 (1, 'format obrazu', 'geotiff');  
 
 
