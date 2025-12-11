@@ -2,8 +2,9 @@ from typing import Optional
 import datetime
 import decimal
 
-from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, Date, ForeignKeyConstraint, Identity, Numeric, PrimaryKeyConstraint, SmallInteger, Table, Text
+from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, Date, ForeignKeyConstraint, Identity, Numeric, PrimaryKeyConstraint, SmallInteger, Text
 from sqlmodel import Field, Relationship, SQLModel
+
 
 class Groups(SQLModel, table=True):
     __tablename__ = 'Groups'
@@ -73,8 +74,10 @@ class TypeParameters(SQLModel, table=True):
     type_name: str = Field(foreign_key="Offer_Types.name", primary_key=True)
     parameter_name: str = Field(foreign_key="Parameters.name", primary_key=True)
 
-Parameters.Offer_Types: list['OfferTypes'] = Relationship(back_populates='Parameters', link_model=TypeParameters )
-OfferTypes.Parameters: list['Parameters'] = Relationship(back_populates='Offer_Types', link_model=TypeParameters )
+
+Parameters.Offer_Types: list['OfferTypes'] = Relationship(back_populates='Parameters', link_model=TypeParameters)
+OfferTypes.Parameters: list['Parameters'] = Relationship(back_populates='Offer_Types', link_model=TypeParameters)
+
 
 class Users(SQLModel, table=True):
     __tablename__ = 'Users'

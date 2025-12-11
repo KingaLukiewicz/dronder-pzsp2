@@ -1,6 +1,5 @@
 
-from sqlmodel import create_engine, text, SQLModel, select, Session
-from .models import Weekdays
+from sqlmodel import create_engine, SQLModel, Session
 import os
 
 db_url = (
