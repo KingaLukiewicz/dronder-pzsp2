@@ -74,4 +74,4 @@ def set_aboutme():
     return HTTPStatus.OK
 
 
-@bp.route("/", methods=["POST"])
+# @bp.route("/", methods=["POST"])
