@@ -92,9 +92,9 @@ CREATE TABLE IF NOT EXISTS public."Parameters"
 
 CREATE TABLE IF NOT EXISTS public."Type_Parameters"
 (
-    type_parameters_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     type_name text NOT NULL,
-    parameter_name text NOT NULL
+    parameter_name text NOT NULL,
+     PRIMARY KEY (type_name, parameter_name)
 );
 
 CREATE TABLE IF NOT EXISTS public."Offer_Types"
