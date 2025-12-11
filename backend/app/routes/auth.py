@@ -2,16 +2,17 @@ import logging
 from http import HTTPStatus
 
 from flask import Blueprint, Response, jsonify, request
+
+from flask_jwt_extended import create_access_token  # pyright: ignore[reportUnknownVariableType]
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from app.config import DEBUG
-from app.db import db
+from app.db import get_db_session
 from app.forms.auth import LoginForm, RegisterForm
-from app.models.user import User
+from app.models.generated_models import Users as User
 from app.utils.errors import create_validation_error
-from flask_jwt_extended import create_access_token  # pyright: ignore[reportUnknownVariableType]
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -19,6 +20,7 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 @bp.route("/register", methods=["POST"])
 def register_user():
     form: RegisterForm
+    session = get_db_session()
     try:
         form = RegisterForm(**(request.json or {}))  # pyright: ignore[reportUnknownArgumentType, reportAny]  # noqa: E501
     except ValidationError as e:
@@ -30,10 +32,11 @@ def register_user():
         )
 
     try:
-        user = User.model_validate(form)
-        db.session.add(user)
-        db.session.commit()
-        db.session.refresh(user)
+        # FIX: Look into ORM model creation
+        user = User.model_validate(form)  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
+        session.add(user)
+        session.commit()
+        session.refresh(user)
     except IntegrityError:
         return Response(
             create_validation_error(
@@ -53,13 +56,15 @@ def list_users():
     if not DEBUG:
         return "ndebug", HTTPStatus.FORBIDDEN
 
-    users = db.session.execute(select(User).order_by(User.email)).scalars()
+    session = get_db_session()
+    users = session.execute(select(User).order_by(User.email)).scalars()
     return jsonify(users.all())
 
 
 @bp.route("/login", methods=["POST"])
 def login_user():
     form: LoginForm
+    session = get_db_session()
     try:
         form = LoginForm(**(request.json or {}))  # pyright: ignore[reportUnknownArgumentType, reportAny]  # noqa: E501
     except ValidationError as e:
@@ -70,7 +75,7 @@ def login_user():
             mimetype="application/json",
         )
 
-    user = db.session.scalars(select(User).filter_by(email=form.email)).one_or_none()
+    user = session.scalars(select(User).filter_by(email=form.email)).one_or_none()
 
     if user is None:
         return "User doen't exists", HTTPStatus.NOT_FOUND

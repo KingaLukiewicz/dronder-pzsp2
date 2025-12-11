@@ -4,14 +4,15 @@ import decimal
 
 from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, Date, ForeignKeyConstraint, Identity, Numeric, PrimaryKeyConstraint, SmallInteger, Table, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlmodel import SQLModel
 
 class Base(DeclarativeBase):
     pass
 
 
 class Groups(Base):
-    __tablename__ = 'Groups'
-    __table_args__ = (
+    __tablename__ = 'Groups'  # pyright: ignore[reportUnannotatedClassAttribute, reportAssignmentType]
+    __table_args__ = (  # pyright: ignore[reportUnannotatedClassAttribute]
         PrimaryKeyConstraint('group_id', name='Groups_pkey'),
     )
 
@@ -24,8 +25,8 @@ class Groups(Base):
 
 
 class Locations(Base):
-    __tablename__ = 'Locations'
-    __table_args__ = (
+    __tablename__ = 'Locations'  # pyright: ignore[reportAssignmentType, reportUnannotatedClassAttribute]
+    __table_args__ = (  # pyright: ignore[reportUnannotatedClassAttribute]
         CheckConstraint('address IS NOT NULL OR geo_longitude IS NOT NULL AND geo_latitude IS NOT NULL AND radius IS NOT NULL', name='check_locations'),
         PrimaryKeyConstraint('location_id', name='Locations_pkey')
     )
@@ -41,7 +42,7 @@ class Locations(Base):
 
 
 class OfferTypes(Base):
-    __tablename__ = 'Offer_Types'
+    __tablename__ = 'Offer_Types'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         PrimaryKeyConstraint('name', name='Offer_Types_pkey'),
     )
@@ -53,7 +54,7 @@ class OfferTypes(Base):
 
 
 class Parameters(Base):
-    __tablename__ = 'Parameters'
+    __tablename__ = 'Parameters'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         PrimaryKeyConstraint('name', name='Parameters_pkey'),
     )
@@ -65,7 +66,7 @@ class Parameters(Base):
 
 
 class Weekdays(Base):
-    __tablename__ = 'Weekdays'
+    __tablename__ = 'Weekdays'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         PrimaryKeyConstraint('weekday', name='Weekdays_pkey'),
     )
@@ -86,7 +87,7 @@ t_Type_Parameters = Table(
 
 
 class Users(Base):
-    __tablename__ = 'Users'
+    __tablename__ = 'Users'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         ForeignKeyConstraint(['group_id'], ['Groups.group_id'], name='Users_group_id_fkey'),
         ForeignKeyConstraint(['location_id'], ['Locations.location_id'], name='Users_location_id_fkey'),
@@ -109,7 +110,7 @@ class Users(Base):
 
 
 class AvailableWeekdays(Base):
-    __tablename__ = 'Available_Weekdays'
+    __tablename__ = 'Available_Weekdays'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         ForeignKeyConstraint(['operator_id'], ['Users.user_id'], name='Available_Weekdays_operator_id_fkey'),
         ForeignKeyConstraint(['weekday'], ['Weekdays.weekday'], name='Available_Weekdays_weekday_fkey'),
@@ -125,7 +126,7 @@ class AvailableWeekdays(Base):
 
 
 class Offers(Base):
-    __tablename__ = 'Offers'
+    __tablename__ = 'Offers'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         CheckConstraint('client_rating >= 1 AND client_rating <= 5', name='Offers_client_rating_check'),
         CheckConstraint('operator_rating >= 1 AND operator_rating <= 5', name='Offers_operator_rating_check'),
@@ -158,7 +159,7 @@ class Offers(Base):
 
 
 class Matches(Base):
-    __tablename__ = 'Matches'
+    __tablename__ = 'Matches'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         ForeignKeyConstraint(['offer_id'], ['Offers.offer_id'], name='Matches_offer_id_fkey'),
         ForeignKeyConstraint(['operator_id'], ['Users.user_id'], name='Matches_operator_id_fkey'),
@@ -174,7 +175,7 @@ class Matches(Base):
 
 
 class OfferParameters(Base):
-    __tablename__ = 'Offer_Parameters'
+    __tablename__ = 'Offer_Parameters'  # pyright: ignore[reportAssignmentType]
     __table_args__ = (
         ForeignKeyConstraint(['offer_id'], ['Offers.offer_id'], name='Offer_Parameters_offer_id_fkey'),
         ForeignKeyConstraint(['parameter_id'], ['Parameters.name'], name='Offer_Parameters_parameter_id_fkey'),

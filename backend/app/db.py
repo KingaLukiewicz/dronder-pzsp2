@@ -1,14 +1,19 @@
 import os
-from sqlalchemy import create_engine, text, select
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
-from models import Groups, Base, Weekdays, Parameters
+from app.models import Groups, Weekdays, Parameters
 
 db_url = (
     f"postgresql+psycopg2://{os.environ['DB_USER']}:{os.environ['DB_PASSWORD']}"
-    f"@localhost:5432/{os.environ['DB_NAME']}"
+    f"@database:5432/{os.environ['DB_NAME']}"
 )
 
 engine = create_engine(db_url)
+
+
+def get_db_session():
+    return Session(engine)
+
 
 with Session(engine) as session:
     result = session.execute(select(Groups)).scalars().all()
@@ -22,3 +27,4 @@ with Session(engine) as session:
     results = result = session.execute(select(Weekdays)).scalars().all()
     for weekday in results:
         print(weekday.weekday)
+

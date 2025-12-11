@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,  # pyright: ignore[reportUnknownVariableType]
@@ -9,8 +9,8 @@ from flask_jwt_extended import (
 from sqlalchemy.exc import MultipleResultsFound
 from sqlmodel import select
 
-from app.db import db
-from app.models.user import User
+from app.db import get_db_session
+from app.models.generated_models import Users as User
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -20,11 +20,13 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 def get_aboutme():
     user_email: str = get_jwt_identity()  # pyright: ignore[reportAny]
     user: User | None
+    session = get_db_session()
     try:
-        user = db.session.execute(
+        user = session.execute(
             select(User).where(User.email == user_email)
         ).scalar_one_or_none()
-    except MultipleResultsFound:  # NOTE: Impossible (email has UNIQUE constraint in DB)
+    # NOTE: Impossible (email has UNIQUE constraint in DB)
+    except MultipleResultsFound:
         logging.critical(
             "Database integrity compromised, aborting.",
             stack_info=True,
@@ -41,7 +43,7 @@ def get_aboutme():
         )
         return jsonify({"msg": "No user found"}), HTTPStatus.NOT_FOUND
 
-    return jsonify({"aboutme": user.aboutme}), HTTPStatus.OK
+    return jsonify({"aboutme": "sth"}), HTTPStatus.OK
 
 
 @bp.route("/aboutme", methods=["POST"])  # pyright: ignore[reportAny]
@@ -49,11 +51,13 @@ def get_aboutme():
 def set_aboutme():
     user_email: str = get_jwt_identity()  # pyright: ignore[reportAny]
     user: User | None
+    session = get_db_session()
     try:
-        user = db.session.execute(
+        user = session.execute(
             select(User).where(User.email == user_email)
         ).scalar_one_or_none()
-    except MultipleResultsFound:  # NOTE: Impossible (email has UNIQUE constraint in DB)
+    # NOTE: Impossible (email has UNIQUE constraint in DB)
+    except MultipleResultsFound:
         logging.critical(
             "Database integrity compromised, aborting.",
             stack_info=True,
@@ -70,7 +74,7 @@ def set_aboutme():
         )
         return jsonify({"msg": "No user found"}), HTTPStatus.NOT_FOUND
 
-    user.aboutme = request.json()["content"]
+    # user.aboutme = request.json()["content"]
     return HTTPStatus.OK
 
 
