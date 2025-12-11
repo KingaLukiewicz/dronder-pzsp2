@@ -27,4 +27,4 @@ with app.app_context():
 def hello_world():
     with get_db_session() as session:
         result = session.exec(select(Weekdays)).all()
-        return {"result": [item.dict() for item in result]}
+        return {"result": [item.model_dump() for item in result]}

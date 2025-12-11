@@ -10,7 +10,7 @@ from sqlalchemy.exc import MultipleResultsFound
 from sqlmodel import select
 
 from app.db import get_db_session
-from app.models.generated_models import Users as User
+from app.models import Users as User
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
