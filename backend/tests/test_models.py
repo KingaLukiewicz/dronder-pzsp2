@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 import pytest
-from app.models import Base, Groups
+from app.models import Base, Groups, Weekdays, Parameters
 
 @pytest.fixture
 def test_engine():
@@ -26,37 +26,23 @@ def test_insert_and_select_group(test_engine):
         assert result[0].admin is False
 
 
-# def test_insert_and_select_weekday(test_engine):
-#     with Session(test_engine) as session:
-#         weekday = Weekday(weekday="Poniedziałek")
-#         session.add(weekday)
-#         session.commit()
+def test_insert_and_select_weekday(test_engine):
+    with Session(test_engine) as session:
+        weekday = Weekdays(weekday="Poniedziałek")
+        session.add(weekday)
+        session.commit()
         
-#         result = session.exec(select(Weekday)).all()
-#         assert len(result) == 1
-#         assert result[0].weekday == "Poniedziałek"
+        result = session.execute(select(Weekdays)).scalars().all()
+        assert len(result) == 1
+        assert result[0].weekday == "Poniedziałek"
 
 
-# def test_insert_and_select_parameter(test_engine):
-#     with Session(test_engine) as session:
-#         param = Parameter(name="GSD")
-#         session.add(param)
-#         session.commit()
+def test_insert_and_select_parameter(test_engine):
+    with Session(test_engine) as session:
+        param = Parameters(name="GSD")
+        session.add(param)
+        session.commit()
         
-#         result = session.exec(select(Parameter)).all()
-#         assert len(result) == 1
-#         assert result[0].name == "GSD"
-
-
-# def test_insert_and_select_offer_type(test_engine):
-#     with Session(test_engine) as session:
-#         offer_type = OfferType(name="Ortofotomapa")
-#         session.add(offer_type)
-#         session.commit()
-        
-#         result = session.exec(select(OfferType)).all()
-#         assert len(result) == 1
-#         assert result[0].name == "Ortofotomapa"
-
-
-
+        result = session.execute(select(Parameters)).scalars().all()
+        assert len(result) == 1
+        assert result[0].name == "GSD"

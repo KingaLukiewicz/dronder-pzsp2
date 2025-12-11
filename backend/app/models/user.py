@@ -16,10 +16,6 @@ from sqlmodel import Field, Relationship, SQLModel  # pyright: ignore[reportUnkn
 #         default=None, foreign_key="working_weekdays.id", primary_key=True
 #     )
 
-
-
-
-
 # class WorkingWeekday(SQLModel, table=True):
 #     __tablename__: str = "working_weekdays"  # pyright: ignore[reportIncompatibleVariableOverride]
 

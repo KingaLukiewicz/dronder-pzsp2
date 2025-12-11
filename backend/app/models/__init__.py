@@ -1,4 +1,3 @@
-# from .dictionary_models import Weekday, OfferType, Parameter
-from .generated_models import Groups, Base
+from .generated_models import Groups, Base, Weekdays, OfferTypes, Parameters
 
-# __all__ = ["Weekday", "OfferType", "Parameter", "Group"]
+__all__ = ["Weekdays", "OfferTypes", "Parameters", "Groups"]
