@@ -12,7 +12,7 @@ services:
     environment:
       - PYTHONPATH=/app
     depends_on:
-      db:
+      database:
         condition: service_healthy
     env_file:
       - .env
@@ -28,7 +28,7 @@ services:
           path: ./backend/
           target: /app
           ignore: ./backend/.venv/
-  db:
+  database:
     image: postgres:18
     container_name: database
     volumes:

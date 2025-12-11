@@ -11,7 +11,7 @@ from sqlmodel import select
 from app.config import DEBUG
 from app.db import get_db_session
 from app.forms.auth import LoginForm, RegisterForm
-from app.models.generated_models import Users as User
+from app.models import Users as User
 from app.utils.errors import create_validation_error
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")

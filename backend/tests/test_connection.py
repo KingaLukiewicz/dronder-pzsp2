@@ -1,8 +1,7 @@
 import pytest
 import os
-from sqlalchemy import create_engine, select, exists
-from sqlalchemy.orm import Session
-from app.models import Base, Weekdays
+from sqlmodel import create_engine, text, SQLModel, select, Session
+from app.models import Weekdays
 
 
 @pytest.fixture
@@ -12,16 +11,11 @@ def test_postgres():
         f"@localhost:5432/{os.environ['DB_NAME']}"
     )
 
-    Base.metadata.create_all(engine)
-    yield engine
-    Base.metadata.drop_all(engine)
+    return engine
 
 
 def test_weekdays_not_empty(test_postgres):
-    engine = test_postgres
+    with Session(test_postgres) as session:
+        result = session.exec(select(Weekdays))
 
-    with Session(engine) as session:
-        stmt = select(exists().where(Weekdays.weekday.isnot(None)))
-        result = session.execute(stmt).scalar()
-
-        assert result is True
+        assert len(result.all()) == 7

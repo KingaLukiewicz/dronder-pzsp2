@@ -1,29 +1,25 @@
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
-
 import pytest
-from app.models import Base, Groups, Weekdays, Parameters
+from sqlmodel import SQLModel, create_engine, Session, select
+from app.models import Groups, Weekdays, Parameters
 
 @pytest.fixture
 def test_engine():
-    engine = create_engine("sqlite:///:memory:", echo=True)
-    Base.metadata.create_all(bind=engine)
-    yield engine
-    Base.metadata.drop_all(bind=engine)
+    engine = create_engine("sqlite:///:memory:")
+    SQLModel.metadata.create_all(engine)
+    return engine
 
 
-def test_insert_and_select_group(test_engine):
+def test_create_group(test_engine):
     with Session(test_engine) as session:
-        group = Groups(group_id=1, client=True, operator=False, admin=False)
+        group = Groups(group_id=1, client=True, operator=False, admin=True)
         session.add(group)
         session.commit()
-        
-        result = session.execute(select(Groups)).scalars().all()
-        
-        assert len(result) == 1
-        assert result[0].client is True
-        assert result[0].operator is False
-        assert result[0].admin is False
+        session.refresh(group)
+
+        assert group.group_id == 1
+        assert group.client is True
+        assert group.operator is False
+        assert group.admin is True
 
 
 def test_insert_and_select_weekday(test_engine):
