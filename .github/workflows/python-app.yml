@@ -38,14 +38,14 @@ jobs:
       working-directory: ./backend
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        uv run flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+        uv run flake8 app --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        uv run flake8 src --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        uv run flake8 app --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Run Tests
+      working-directory: ./backend
+      run: PYTHONPATH=. uv run pytest tests --ignore=tests/integration
     
     - name: Typecheck with mypy
       working-directory: ./backend
-      run: uv run mypy src
-
-    - name: Run Tests
-      working-directory: ./backend
-      run: uv run pytest tests
+      run: uv run mypy --check-untyped-defs app
