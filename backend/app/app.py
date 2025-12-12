@@ -16,8 +16,8 @@ app.config["JWT_ALGORITHM"] = JWT_ALGORITHM
 app.register_blueprint(auth.bp)
 
 
-_ = CORS(app)
-_ = JWTManager(app)
+_ = CORS(app)  # type: ignore
+_ = JWTManager(app)  # type: ignore
 
 with app.app_context():
     init_db()

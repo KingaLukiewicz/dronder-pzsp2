@@ -2,6 +2,7 @@ import pytest
 from sqlmodel import SQLModel, create_engine, Session, select
 from app.models import Groups, Weekdays, Parameters
 
+
 @pytest.fixture
 def test_engine():
     engine = create_engine("sqlite:///:memory:")
@@ -27,7 +28,7 @@ def test_insert_and_select_weekday(test_engine):
         weekday = Weekdays(weekday="Poniedziałek")
         session.add(weekday)
         session.commit()
-        
+
         result = session.execute(select(Weekdays)).scalars().all()
         assert len(result) == 1
         assert result[0].weekday == "Poniedziałek"
@@ -38,7 +39,8 @@ def test_insert_and_select_parameter(test_engine):
         param = Parameters(name="GSD")
         session.add(param)
         session.commit()
-        
+
         result = session.execute(select(Parameters)).scalars().all()
         assert len(result) == 1
         assert result[0].name == "GSD"
+
