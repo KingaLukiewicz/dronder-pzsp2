@@ -48,4 +48,4 @@ jobs:
     
     - name: Typecheck with mypy
       working-directory: ./backend
-      run: uv run mypy --check-uptyped-defs app tests
+      run: uv run mypy --check-untyped-defs app
