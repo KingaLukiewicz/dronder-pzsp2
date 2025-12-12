@@ -31,7 +31,7 @@ jobs:
       working-directory: ./backend
       run: |
         uv tool install flake8
-        uv tool install basedpyright
+        uv tool install mypy
         uv sync --locked --all-extras --dev
       
     - name: Lint with flake8
@@ -42,10 +42,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         uv run flake8 app --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
-    - name: Typecheck with mypy
-      working-directory: ./backend
-      run: uv run basedpyright
-
     - name: Run Tests
       working-directory: ./backend
       run: uv run pytest tests
+    
+    - name: Typecheck with mypy
+      working-directory: ./backend
+      run: uv run mypy --check-uptyped-defs app tests
