@@ -1,0 +1,45 @@
+.Profile {
+  margin-top: 15vh;
+  color: black;
+}
+
+.Profile h1 {
+  font-size: clamp(1rem, 2.5vw, 3rem);
+  font-weight: bold;
+}
+
+.InfoContainer {
+  margin-top: 2vh;
+  background-color: #93d9e6;
+  opacity: 0.8;
+  border-radius: 20px;
+  height: 30vh;
+  width: 90%;
+  overflow: auto;
+  font-size: clamp(1rem, 1.2vw, 3rem);
+}
+
+.Info h2 {
+  font-size: clamp(1rem, 1.5vw, 3rem);
+  font-weight: bold;
+}
+
+.Info {
+  margin: 3vh;
+  gap: 2vh;
+}
+
+.StarRating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.Rating {
+  padding-top: 2vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
