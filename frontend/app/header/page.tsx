@@ -1,14 +1,19 @@
 "use client";
+import { useState } from "react";
 import styles from "./page.module.css";
 import Image from "next/image";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
-const Header = () => {
+const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   return (
     <div className={styles.Header}>
       <div className={styles.HeaderLeft}>
-        <div className={styles.appLogo}>
+        <div
+          className={styles.appLogo}
+          onClick={toggleSidebar}
+          style={{ cursor: "pointer" }}
+        >
           <Image
             src="/dronder_logo_header.png"
             alt="App logo"
