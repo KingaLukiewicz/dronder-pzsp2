@@ -19,13 +19,13 @@
   color: #e5e5e5;
   background-image: linear-gradient(to right, #184e77, #52b6ae);
 
-  font-size: clamp(1rem, 1.5vw, 3rem);
+  font-size: clamp(1rem, 2vw, 3rem);
 }
 
 .HeaderLeft {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-left: 1vw;
   font-weight: bold;
 }
