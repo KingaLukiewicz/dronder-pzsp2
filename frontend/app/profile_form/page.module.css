@@ -1,0 +1,84 @@
+.Form {
+  background-color: #46bbde;
+  border-radius: 50px;
+  margin-top: 5vh;
+  height: 90vh;
+  margin-left: 15vw;
+  width: 70vw;
+  color: white;
+}
+
+.Form h1 {
+  font-size: clamp(1rem, 5vh, 3rem);
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  padding-top: 2vh;
+}
+
+.Form h2 {
+  font-size: clamp(1rem, 2.5vh, 3rem);
+  font-weight: bold;
+  margin-top: 1vh;
+}
+
+.MainContent {
+  padding-left: 5vw;
+}
+
+.AboutMe {
+  height: 12vh;
+  width: 90%;
+  background-color: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  resize: vertical;
+  border-radius: 8px;
+}
+
+.Input {
+  height: 4vh;
+  background-color: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding-left: 0.5vw;
+  width: 80%;
+}
+
+.LocationRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1vh;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.ButtonRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3vh;
+  margin-right: 10%;
+}
+
+.Button {
+  font-size: 2.5vh !important;
+  background: transparent;
+  border: 1px solid white !important;
+  border-color: white !important;
+  color: white !important;
+  padding: 20px 30px;
+  cursor: pointer;
+  border-radius: 0px;
+  width: 10vw;
+}
+
+.Button:hover {
+  transform: scale(1.05);
+  color: white;
+  font-weight: bolder;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
