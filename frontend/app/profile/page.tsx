@@ -3,10 +3,12 @@ import { useState } from "react";
 import Header from "../header/page";
 import Sidebar from "../sidebar/page";
 import styles from "./page.module.css";
+import ReviewBox from "../review_box/page";
 import { Tooltip, Rating } from "@mui/material";
 
 export default function Profile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sortBy, setSortBy] = useState("");
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -44,6 +46,20 @@ export default function Profile() {
               <p>{`84 oceny`}</p>
             </div>
           </div>
+        </div>
+        <h2>OPINIE</h2>
+        <select
+          className={styles.Select}
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="">-- Sortuj według --</option>
+          <option value="new">Od najnowszych</option>
+          <option value="best">Od najlepszych</option>
+          <option value="worst">Od najgorszych</option>
+        </select>
+        <div className={styles.Reviews}>
+          <ReviewBox />
         </div>
       </main>
     </div>
