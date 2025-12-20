@@ -44,31 +44,81 @@ export default function ProfileForm() {
         <FormGroup>
           <FormControlLabel
             control={
-              <Checkbox checked={map} onChange={handleChange} name="map" />
+              <Checkbox
+                checked={map}
+                onChange={handleChange}
+                name="map"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
+              />
             }
             label="Ortofotomapy"
           />
           <FormControlLabel
             control={
-              <Checkbox checked={nmp} onChange={handleChange} name="nmp" />
+              <Checkbox
+                checked={nmp}
+                onChange={handleChange}
+                name="nmp"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
+              />
             }
             label="Numeryczne Modele Terenu"
           />
           <FormControlLabel
             control={
-              <Checkbox checked={nmpt} onChange={handleChange} name="nmpt" />
+              <Checkbox
+                checked={nmpt}
+                onChange={handleChange}
+                name="nmpt"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
+              />
             }
             label="Numeryczne Modele Pokrycia Terenu"
           />
           <FormControlLabel
             control={
-              <Checkbox checked={cloud} onChange={handleChange} name="cloud" />
+              <Checkbox
+                checked={cloud}
+                onChange={handleChange}
+                name="cloud"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
+              />
             }
             label="Chmury Punktów"
           />
           <FormControlLabel
             control={
-              <Checkbox checked={mesh} onChange={handleChange} name="mesh" />
+              <Checkbox
+                checked={mesh}
+                onChange={handleChange}
+                name="mesh"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
+              />
             }
             label="Modele Mesh 3D"
           />
@@ -78,6 +128,12 @@ export default function ProfileForm() {
                 checked={scanning}
                 onChange={handleChange}
                 name="scanning"
+                sx={{
+                  color: "#ffffff",
+                  "&.Mui-checked": {
+                    color: "#ffffff",
+                  },
+                }}
               />
             }
             label="Scanning Laserowy"
