@@ -22,8 +22,9 @@ class Groups(SQLModel, table=True):
     __tablename__ = "Groups"
     __table_args__ = (PrimaryKeyConstraint("group_id", name="Groups_pkey"),)
 
-    group_id: int = Field(
-        sa_column=Column("group_id", BigInteger, Identity(), primary_key=True)
+    group_id: int | None = Field(
+        sa_column=Column("group_id", BigInteger, Identity(), primary_key=True),
+        default=None,
     )
     client: bool = Field(sa_column=Column("client", Boolean, nullable=False))
     operator: bool = Field(sa_column=Column("operator", Boolean, nullable=False))
@@ -42,8 +43,9 @@ class Locations(SQLModel, table=True):
         PrimaryKeyConstraint("location_id", name="Locations_pkey"),
     )
 
-    location_id: int = Field(
-        sa_column=Column("location_id", BigInteger, Identity(), primary_key=True)
+    location_id: int | None = Field(
+        sa_column=Column("location_id", BigInteger, Identity(), primary_key=True),
+        default=None,
     )
     geo_longitude: Optional[decimal.Decimal] = Field(
         default=None, sa_column=Column("geo_longitude", Numeric(9, 6))
@@ -112,17 +114,25 @@ class Users(SQLModel, table=True):
         PrimaryKeyConstraint("user_id", name="Users_pkey"),
     )
 
-    user_id: int = Field(
-        sa_column=Column("user_id", BigInteger, Identity(), primary_key=True)
+    user_id: int | None = Field(
+        sa_column=Column(
+            "user_id", BigInteger, Identity(), primary_key=True, default=None
+        ),
+        default=None,
     )
     email: str = Field(sa_column=Column("email", Text, nullable=False))
     username: str = Field(sa_column=Column("username", Text, nullable=False))
     password: str = Field(sa_column=Column("password", Text, nullable=False))
-    phone_number: str = Field(sa_column=Column("phone_numbers", Text, nullable=False))
-    group_id: int = Field(sa_column=Column("group_id", BigInteger, nullable=False))
-    location_id: Optional[int] = Field(
-        default=None, sa_column=Column("location_id", BigInteger)
+    phone_number: str = Field(sa_column=Column("phone_number", Text, nullable=False))
+    group_id: int | None = Field(
+        sa_column=Column("group_id", BigInteger, nullable=True, default=None),
+        default=None,
     )
+    location_id: Optional[int] = Field(
+        default=None, sa_column=Column("location_id", BigInteger, nullable=True)
+    )
+
+    description: str = Field(default="")
 
     group: Optional["Groups"] = Relationship(back_populates="Users")
     location: Optional["Locations"] = Relationship(back_populates="Users")

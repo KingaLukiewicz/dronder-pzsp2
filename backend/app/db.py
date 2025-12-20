@@ -2,16 +2,17 @@
 from sqlmodel import create_engine, SQLModel, Session
 import os
 
-db_url = (
-        f"postgresql+psycopg2://{os.environ['DB_USER']}:{os.environ['DB_PASSWORD']}"
-        f"@localhost:5432/{os.environ['DB_NAME']}"
-    )
+from app import config
 
-engine = create_engine(db_url)
+db_url = config.DATABASE_URL
+
+engine = create_engine(db_url, echo=True)
 
 
 def init_db():
     SQLModel.metadata.create_all(engine)
+
+    
 
 
 def get_db_session():

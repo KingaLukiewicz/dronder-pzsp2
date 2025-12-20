@@ -11,7 +11,8 @@ from sqlmodel import select
 from app.config import DEBUG
 from app.db import get_db_session
 from app.forms.auth import LoginForm, RegisterForm
-from app.models import Users as User
+from app.models import Groups, Locations, Users as User
+from app.routes.user import find_user_group
 from app.utils.errors import create_validation_error
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -22,7 +23,8 @@ def register_user():
     form: RegisterForm
     session = get_db_session()
     try:
-        form = RegisterForm(**(request.json or {}))  # pyright: ignore[reportUnknownArgumentType, reportAny]  # noqa: E501
+        form = RegisterForm.model_validate(request.json)
+        user = User.model_validate(form)
     except ValidationError as e:
         logging.info(f"Bad register_user request form\n{e}")
         return Response(
@@ -32,23 +34,19 @@ def register_user():
         )
 
     try:
-        # FIX: Look into ORM model creation
-        user = User.model_validate(form)  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
+        user.group = find_user_group(session)
+        user.group_id = user.group.group_id # type: ignore
+
         session.add(user)
         session.commit()
         session.refresh(user)
-    except IntegrityError:
+    except IntegrityError as e:
         return Response(
-            create_validation_error(
-                form,
-                "integrity_error",
-                "account with provided email already exists",
-                "email",
-            ).json(include_input=False),
+            repr(e),
             status=HTTPStatus.BAD_REQUEST,
             mimetype="application/json",
         )
-    return jsonify(user.model_dump()), HTTPStatus.CREATED
+    return jsonify({"user_id": user.user_id}), HTTPStatus.CREATED
 
 
 @bp.route("/list", methods=["GET"])
@@ -57,8 +55,8 @@ def list_users():
         return "ndebug", HTTPStatus.FORBIDDEN
 
     session = get_db_session()
-    users = session.execute(select(User).order_by(User.email)).scalars()
-    return jsonify(users.all())
+    users = session.exec(select(User).order_by(User.email)).all()
+    return jsonify(users)
 
 
 @bp.route("/login", methods=["POST"])
@@ -66,7 +64,7 @@ def login_user():
     form: LoginForm
     session = get_db_session()
     try:
-        form = LoginForm(**(request.json or {}))  # pyright: ignore[reportUnknownArgumentType, reportAny]  # noqa: E501
+        form = LoginForm.model_validate(request.json)
     except ValidationError as e:
         logging.info(f"Bad register_user request form\n{e}")
         return Response(
@@ -83,5 +81,5 @@ def login_user():
     if user.password != form.password:
         return "Invalid password", HTTPStatus.BAD_REQUEST
 
-    access_token = create_access_token(identity=user.email)
+    access_token = create_access_token(identity=str(user.user_id))
     return jsonify(access_token=access_token), HTTPStatus.OK

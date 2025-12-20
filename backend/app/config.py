@@ -1,15 +1,16 @@
 import os
 from typing import Final
 
-JWT_SECRET: Final[str] = os.environ["JWT_SECRET"]
-JWT_ALGORITHM: Final[str] = os.environ["JWT_ALGORITHM"]
+JWT_SECRET: Final[str] = os.getenv("JWT_SECRET", "TEST")
+JWT_SECRET_KEY: Final[str] = os.getenv("JWT_SECRET_KEY", "TEST")
+JWT_ALGORITHM: Final[str] = os.getenv("JWT_ALGORITHM", "HS256")
 
-DEBUG: Final[bool] = "DEBUG" in os.environ and os.environ["DEBUG"] == "1"
+DEBUG: Final[bool] = bool(os.getenv("DEBUG", False))
 
 DATABASE_URL: Final[str] = (
     "sqlite:///:memory:"
     if DEBUG
-    else f"postgresql+psycopg2://{os.environ['DB_USER']}:{
-        os.environ['DB_PASSWORD']
-    }@database/{os.environ['DB_NAME']}"
+    else f"postgresql+psycopg2://{os.getenv('DB_USER', 'USER')}:{
+        os.getenv('DB_PASSWORD', 'PASSWORD')
+    }@localhost/{os.getenv('DB_NAME', 'NAME')}"
 )
