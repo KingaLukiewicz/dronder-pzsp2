@@ -2,7 +2,7 @@
   color: #1a1a1a;
   background-color: #9adde9;
   height: 20vh;
-  width: 65vw;
+  width: 100%;
   position: relative;
   border-radius: 15px;
   font-size: clamp(0.6rem, 1.5vw, 1rem);
