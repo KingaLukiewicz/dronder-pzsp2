@@ -30,8 +30,8 @@ export type OfferGet2 = Array<OfferGet>;
 export type OfferPost = {
   description: string;
   offer_type: string;
-  flight_date?: Date; // as string
-  deadline_date: Date; // as string
+  flight_date?: string;
+  deadline_date: string;
   location: Loc;
   format: string;
   parameters?: Array<Parameter>;
