@@ -5,12 +5,18 @@ import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
 
 export default function Log() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  interface Token {
+    access_token: string;
+  }
 
   const handleLogin = async () => {
     setError(null); // Clear previous errors
@@ -28,7 +34,10 @@ export default function Log() {
       if (!res.ok) {
         throw new Error("Błędny email lub hasło");
       }
-      redirect("/profile");
+      const data: Token = await res.json();
+      sessionStorage.setItem("token", data.access_token);
+
+      router.push("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
