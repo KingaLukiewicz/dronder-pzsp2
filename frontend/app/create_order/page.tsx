@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { OfferPost } from "../types";
 import { useState } from "react";
 
 export default function ProfileForm() {
@@ -25,6 +26,51 @@ export default function ProfileForm() {
       ...state,
       [event.target.name]: event.target.checked,
     });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+      // Tworzymy obiekt OfferPost z pól formularza
+      const offer: OfferPost = {
+        description,
+        offer_type: service,
+        deadline_date: new Date(deadline),
+        location: { address: location },
+        format: file,
+        parameters: [
+          { name: "GSD", value: gsd },
+          { name: "accuracy", value: accuracy },
+          { name: "RTK", value: rtk ? "true" : "false" },
+          { name: "photopoints", value: photopoints ? "true" : "false" },
+        ],
+      };
+
+      if (flightDate) {
+        offer.flight_date = new Date(flightDate);
+      }
+
+      const res = await fetch("http://127.0.0.1:5001/offer/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(offer),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Błąd serwera: ${errText}`);
+      }
+
+      alert("Zlecenie zostało utworzone!");
+    } catch (err: unknown) {
+      console.error(err);
+      if (err instanceof Error) alert(err.message);
+    }
   };
 
   const { rtk, photopoints } = state;
@@ -144,6 +190,7 @@ export default function ProfileForm() {
         <Button
           className={styles.Button}
           sx={{ textTransform: "none !important" }}
+          onClick={handleSubmit}
         >
           Zapisz
         </Button>
