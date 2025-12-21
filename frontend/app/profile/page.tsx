@@ -36,7 +36,11 @@ export default function Profile() {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
         const data: UserdataGet = await res.json();
         setUserData(data);
       } catch (error) {
@@ -58,21 +62,25 @@ export default function Profile() {
               <div className={styles.Info}>
                 <h2>{userData.username}</h2>
                 <p>{userData.description}</p>
-                <div className={styles.Rating}>
-                  <div className={styles.StarRating}>
-                    <Tooltip placement="top" title={averageRating}>
-                      <span>
-                        <Rating
-                          name="read-only"
-                          value={averageRating}
-                          precision={0.1}
-                          readOnly
-                        />
-                      </span>
-                    </Tooltip>
-                  </div>
-                  <p>{`${totalReviews} oceny`}</p>
-                </div>
+                {userData.reviews && (
+                  <>
+                    <div className={styles.Rating}>
+                      <div className={styles.StarRating}>
+                        <Tooltip placement="top" title={averageRating}>
+                          <span>
+                            <Rating
+                              name="read-only"
+                              value={averageRating}
+                              precision={0.1}
+                              readOnly
+                            />
+                          </span>
+                        </Tooltip>
+                      </div>
+                      <p>{`${totalReviews} oceny`}</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </>
