@@ -28,16 +28,20 @@ export default function ProfileForm() {
     });
   };
 
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toUTCString();
+  };
+
   const handleSubmit = async () => {
     try {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
 
-      // Tworzymy obiekt OfferPost z pól formularza
       const offer: OfferPost = {
         description,
         offer_type: service,
-        deadline_date: new Date(deadline),
+        deadline_date: formatDate(deadline),
         location: { address: location },
         format: file,
         parameters: [
@@ -49,10 +53,10 @@ export default function ProfileForm() {
       };
 
       if (flightDate) {
-        offer.flight_date = new Date(flightDate);
+        offer.flight_date = formatDate(flightDate);
       }
 
-      const res = await fetch("http://127.0.0.1:5001/offer/", {
+      const res = await fetch("http://127.0.0.1:5000/offer/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
