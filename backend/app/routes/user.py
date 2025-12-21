@@ -7,6 +7,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,  # pyright: ignore[reportUnknownVariableType]
 )
+from pydantic import ValidationError
 from sqlmodel import Session, select
 
 from app.db import get_db_session
@@ -20,27 +21,27 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 def find_user_group(session: Session):
     return session.exec(
         select(Groups)
-        .where(Groups.admin == False)
-        .where(Groups.client == True)
-        .where(Groups.operator == False)
+        .where(Groups.admin == False)  # noqa: E712
+        .where(Groups.client == True)  # noqa: E712
+        .where(Groups.operator == False)  # noqa: E712
     ).first()
 
 
 def find_admin_group(session: Session):
     return session.exec(
         select(Groups)
-        .where(Groups.admin == True)
-        .where(Groups.client == False)
-        .where(Groups.operator == False)
+        .where(Groups.admin == True)  # noqa: E712
+        .where(Groups.client == False)  # noqa: E712
+        .where(Groups.operator == False)  # noqa: E712 # type: ignore
     ).first()
 
 
 def find_operator_group(session: Session):
     return session.exec(
         select(Groups)
-        .where(Groups.admin == False)
-        .where(Groups.client == False)
-        .where(Groups.operator == True)
+        .where(Groups.admin == False)  # noqa: E712
+        .where(Groups.client == False)  # noqa: E712
+        .where(Groups.operator == True)  # noqa: E712
     ).first()
 
 
@@ -62,14 +63,23 @@ def get_userdata(user_id: int | None = None):
 
     reviews = list(
         map(
-            lambda t: Review(reviewer=t[0].client.username, rating=t[2], review=t[1]),  # type: ignore
+            lambda t: Review.model_validate(
+                {
+                    "offer_id": t[0].offer_id,
+                    "reviewer": t[0].client.username, # type: ignore
+                    "rating": t[2],
+                    "review": t[1],
+                }
+            ),
             chain(
                 session.exec(
                     select(
                         Offer,
                         Offer.client_review,
                         Offer.client_rating,
-                    ).where(Offer.client_id == user_id)
+                    )
+                    .where(Offer.client_id == user_id)
+                    .distinct(Offer.offer_id)  # type: ignore
                 ).all(),
                 # session.exec(
                 #     select(Offer.client_review)
@@ -79,6 +89,9 @@ def get_userdata(user_id: int | None = None):
             ),
         )
     )
+
+    print(reviews)
+
 
     location: LocationForm | None = None
     role: list[str] = []
@@ -111,8 +124,11 @@ def get_userdata(user_id: int | None = None):
 def post_userdata():
     user_id: int = int(get_jwt_identity())
     session = get_db_session()
+    try:
+        data = UserdataForm.model_validate(request.json)
+    except ValidationError as e:
+        return e.json(), HTTPStatus.BAD_REQUEST
 
-    data = UserdataForm.model_validate(request.json)
     user = session.exec(select(User).where(User.user_id == user_id)).one_or_none()
     if user is None:
         logging.warning(

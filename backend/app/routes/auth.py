@@ -11,9 +11,8 @@ from sqlmodel import select
 from app.config import DEBUG
 from app.db import get_db_session
 from app.forms.auth import LoginForm, RegisterForm
-from app.models import Groups, Locations, Users as User
+from app.models import Users as User
 from app.routes.user import find_user_group
-from app.utils.errors import create_validation_error
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -35,7 +34,7 @@ def register_user():
 
     try:
         user.group = find_user_group(session)
-        user.group_id = user.group.group_id # type: ignore
+        user.group_id = user.group.group_id  # type: ignore
 
         session.add(user)
         session.commit()

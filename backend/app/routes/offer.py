@@ -1,9 +1,11 @@
 from http import HTTPStatus
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required # type: ignore
+from pydantic import ValidationError
 from sqlmodel import Session, select
 from app.forms.offer import LocationForm, OfferForm, ParameterForm
 from app.models import (
+    Locations,
     Users as User,
     Offers as Offer,
     OfferParameters as OfferParameter,
@@ -18,7 +20,7 @@ bp = Blueprint("offer", __name__, url_prefix="/offer")
 
 def insert_parameters(session: Session, parameters: list[ParameterForm]):
     for param in parameters:
-        param = Parameter(name=param.name)
+        param = Parameter.model_validate({"name": param.name})
         if (
             session.exec(select(Parameter).where(Parameter.name == param.name)).first()
             is None
@@ -26,26 +28,60 @@ def insert_parameters(session: Session, parameters: list[ParameterForm]):
             session.add(param)
 
 
+def insert_location(session: Session, location: LocationForm) -> Locations:
+    loc = Locations.model_validate(location)
+    session.add(loc)
+    session.commit()
+    session.refresh(loc)
+    return loc
+
+
 def parse_parameters(params: list[OfferParameter]) -> list[ParameterForm]:
     ret: list[ParameterForm] = []
     for param in params:
-        ret.append(ParameterForm(name=param.parameter_id, value=param.value))
+        ret.append(
+            ParameterForm.model_validate(
+                {"name": param.parameter_id, "value": param.value}
+            )
+        )
     return ret
 
 
 def parse_offer(offer: Offer) -> OfferForm:
-    return OfferForm(
-        offer_id=offer.offer_id,
-        description=offer.description,
-        client_id=offer.client_id,
-        client_name=offer.client.username,  # pyright: ignore[reportOptionalMemberAccess]
-        offer_type=offer.offer_type,
-        flight_date=offer.flight_date,
-        deadline_date=offer.deadline_date,
-        location=LocationForm.model_validate(offer.location),
-        format=offer.format,
-        parameters=parse_parameters(offer.Offer_Parameters),
+    print(offer.location.model_dump())  # type: ignore
+
+    return OfferForm.model_validate(
+        {
+            "offer_id": offer.offer_id,
+            "description": offer.description,
+            "client_id": offer.client_id,
+            "client_name": offer.client.username,  # pyright: ignore[reportOptionalMemberAccess]
+            "offer_type": offer.offer_type,
+            "flight_date": offer.flight_date,
+            "deadline_date": offer.deadline_date,
+            "location": LocationForm.model_validate(offer.location.model_dump()),  # type: ignore
+            "format": offer.format,
+            "parameters": parse_parameters(offer.Offer_Parameters),
+        }
     )
+
+
+def attach_parameters(session: Session, offer: Offer, params: list[ParameterForm]):
+    for param in params:
+        name = session.exec(
+            select(Parameter).where(Parameter.name == param.name)
+        ).first()
+        assert name is not None
+
+        param = OfferParameter.model_validate(
+            {
+                "offer_id": offer.offer_id,
+                "parameter_id": name.name,
+                "value": param.value,
+            }
+        )
+        session.add(param)
+    session.commit()
 
 
 @bp.post("/")
@@ -58,17 +94,46 @@ def post_offer():
     if user is None:
         return jsonify({"reason": "unknown user"}), HTTPStatus.UNAUTHORIZED
 
-    offer_data = OfferForm.model_validate(request.json)
-    return jsonify({"offer_id": offer_data.offer_id}), HTTPStatus.OK
+    try:
+        print(request.json)
+        offer_data = OfferForm.model_validate(request.json)
+        insert_parameters(session, offer_data.parameters or [])
+    except ValidationError as e:
+        return e.json(include_input=False), HTTPStatus.BAD_REQUEST
+
+    offer_data.location_id = insert_location(session, offer_data.location).location_id
+    offer_data.client_id = user_id
+    offer = Offer.model_validate(offer_data.model_dump())
+
+    session.add(offer)
+    session.commit()
+    session.refresh(offer)
+
+    attach_parameters(session, offer, offer_data.parameters or [])
+    session.commit()
+    session.refresh(offer)
+
+    return jsonify({"offer_id": offer.offer_id}), HTTPStatus.CREATED
 
 
 @bp.get("/")
-@bp.get("/<offer_id:int>")
+@bp.get("/<int:offer_id>")
 @jwt_required()
 def get_offers(offer_id: int | None = None):
     session = get_db_session()
+    user_id: int = int(get_jwt_identity())
 
     stmt = select(Offer)
     if offer_id is not None:
         stmt = stmt.where(Offer.offer_id == offer_id)
+    else:
+        stmt = stmt.where(Offer.client_id == user_id)
+
     offers = session.exec(stmt).all()
+    ret: list[OfferForm] = []
+
+    for offer in offers:
+        print(offer)
+        ret.append(parse_offer(offer))
+
+    return jsonify(ret), HTTPStatus.OK

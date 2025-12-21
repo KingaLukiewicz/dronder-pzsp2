@@ -6,7 +6,7 @@ from app import config
 
 db_url = config.DATABASE_URL
 
-engine = create_engine(db_url, echo=True)
+engine = create_engine(db_url, echo=False)
 
 
 def init_db():

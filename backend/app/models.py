@@ -194,8 +194,11 @@ class Offers(SQLModel, table=True):
         PrimaryKeyConstraint("offer_id", name="Offers_pkey"),
     )
 
-    offer_id: int = Field(
-        sa_column=Column("offer_id", BigInteger, Identity(), primary_key=True)
+    offer_id: int | None = Field(
+        sa_column=Column(
+            "offer_id", BigInteger, Identity(), primary_key=True, default=None
+        ),
+        default=None,
     )
     location_id: int = Field(
         sa_column=Column("location_id", BigInteger, nullable=False)
@@ -272,10 +275,15 @@ class OfferParameters(SQLModel, table=True):
         PrimaryKeyConstraint("offer_parameters_id", name="Offer_Parameters_pkey"),
     )
 
-    offer_parameters_id: int = Field(
+    offer_parameters_id: int | None = Field(
         sa_column=Column(
-            "offer_parameters_id", BigInteger, Identity(), primary_key=True
-        )
+            "offer_parameters_id",
+            BigInteger,
+            Identity(),
+            primary_key=True,
+            default=None,
+        ),
+        default=None,
     )
     offer_id: int = Field(sa_column=Column("offer_id", BigInteger, nullable=False))
     parameter_id: str = Field(sa_column=Column("parameter_id", Text, nullable=False))

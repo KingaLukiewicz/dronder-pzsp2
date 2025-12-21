@@ -1,14 +1,9 @@
 from dataclasses import dataclass
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.forms.offer import LocationForm
+from app.forms.review import ReviewForm as Review
 
-@dataclass
-class Review(BaseModel):
-  review_id: int | None = None
-  reviewer: str
-  rating: int | None = Field(None, ge=1, le=5)
-  review: str | None = None
 
 @dataclass
 class UserdataForm(BaseModel):
