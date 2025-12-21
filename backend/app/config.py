@@ -12,5 +12,5 @@ DATABASE_URL: Final[str] = (
     if DEBUG
     else f"postgresql+psycopg2://{os.getenv('DB_USER', 'USER')}:{
         os.getenv('DB_PASSWORD', 'PASSWORD')
-    }@localhost/{os.getenv('DB_NAME', 'NAME')}"
+    }@database/{os.getenv('DB_NAME', 'NAME')}"
 )

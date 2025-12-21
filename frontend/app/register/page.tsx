@@ -8,9 +8,9 @@ import TextField from "@mui/material/TextField";
 import Image from "next/image";
 
 export default function Register() {
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [phone_number, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [re_password, setRePassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export default function Register() {
   const handleRegister = async () => {
     setError(null);
 
-    if (!first_name || !last_name || !password || !re_password) {
+    if (!username || !email || !phone_number || !password || !re_password) {
       setError("Wszystkie pola są wymagane.");
       return;
     }
@@ -36,8 +36,8 @@ export default function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          first_name,
-          last_name,
+          username,
+          phone_number,
           password,
           re_password,
         }),
@@ -81,17 +81,17 @@ export default function Register() {
         </div>
         <TextField
           className={styles.Input}
-          label="imię"
+          label="nazwa użytkownika"
           variant="outlined"
-          value={first_name}
-          onChange={(e) => setFirstName(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <TextField
           className={styles.Input}
-          label="nazwisko"
+          label="numer telefonu"
           variant="outlined"
-          value={last_name}
-          onChange={(e) => setLastName(e.target.value)}
+          value={phone_number}
+          onChange={(e) => setPhoneNumber(e.target.value)}
         />
         <TextField
           className={styles.Input}
