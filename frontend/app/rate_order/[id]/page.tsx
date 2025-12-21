@@ -7,6 +7,7 @@ import Rating from "@mui/material/Rating";
 import { ReviewPost } from "../../types";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RateOrderForm() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function RateOrderForm() {
   const [state, setState] = useState({
     completed: false,
   });
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
@@ -35,7 +37,7 @@ export default function RateOrderForm() {
         review: description || undefined,
       };
 
-      const res = await fetch("http://127.0.0.1:5001/review/", {
+      const res = await fetch("http://127.0.0.1:5000/review/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,6 +52,7 @@ export default function RateOrderForm() {
       }
 
       alert("Opinia została zapisana!");
+      router.push("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) alert(err.message);
       else alert("Wystąpił nieoczekiwany błąd.");
