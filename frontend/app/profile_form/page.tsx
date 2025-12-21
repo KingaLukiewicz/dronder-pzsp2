@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { UserdataPost } from "../types";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ProfileForm() {
@@ -18,12 +20,56 @@ export default function ProfileForm() {
     mesh: false,
     scanning: false,
   });
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({
       ...state,
       [event.target.name]: event.target.checked,
     });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const payload: UserdataPost = {
+        description: aboutMe || undefined,
+        location:
+          address || range
+            ? {
+                address: address || undefined,
+                radius: range ? Number(range) : undefined,
+              }
+            : undefined,
+      };
+
+      const res = await fetch("http://127.0.0.1:5001/user/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Błąd podczas zapisu: ${text}`);
+      }
+      router.push("/profile");
+      alert("Profil został zaktualizowany!");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        alert(err.message);
+      } else {
+        alert("Coś poszło nie tak.");
+      }
+    }
   };
 
   const { map, nmp, nmpt, cloud, mesh, scanning } = state;
@@ -161,6 +207,7 @@ export default function ProfileForm() {
           <Button
             className={styles.Button}
             sx={{ textTransform: "none !important" }}
+            onClick={handleSubmit}
           >
             Zapisz
           </Button>
