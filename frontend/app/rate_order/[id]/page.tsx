@@ -4,9 +4,13 @@ import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Rating from "@mui/material/Rating";
+import { ReviewPost } from "../../types";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ProfileForm() {
+export default function RateOrderForm() {
+  const { id } = useParams();
+  const offerId = Number(id);
   const [rating, setRating] = useState<number | null>(0);
   const [description, setDescription] = useState("");
   const [state, setState] = useState({
@@ -18,6 +22,38 @@ export default function ProfileForm() {
       ...state,
       [event.target.name]: event.target.checked,
     });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+      const review: ReviewPost = {
+        offer_id: offerId,
+        rating: rating || undefined,
+        review: description || undefined,
+      };
+
+      const res = await fetch("http://127.0.0.1:5001/review/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(review),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Błąd serwera: ${errText}`);
+      }
+
+      alert("Opinia została zapisana!");
+    } catch (err: unknown) {
+      if (err instanceof Error) alert(err.message);
+      else alert("Wystąpił nieoczekiwany błąd.");
+    }
   };
 
   const { completed } = state;
@@ -62,6 +98,7 @@ export default function ProfileForm() {
         <Button
           className={styles.Button}
           sx={{ textTransform: "none !important" }}
+          onClick={handleSubmit}
         >
           Zapisz
         </Button>
