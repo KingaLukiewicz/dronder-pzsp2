@@ -16,6 +16,16 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
+    - name: Set up example .env
+      run: |
+        cat <<EOF > .env
+        DB_PASSWORD="PASSWORD"
+        DB_USER="USER"
+        DB_NAME="NAME"
+        JWT_ALGORITHM="HS256"
+        JWT_SECRET="CHANGEME"
+        EOF
+
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
     
