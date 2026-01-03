@@ -36,7 +36,7 @@ jobs:
       working-directory: ./backend
       run: |
           for i in {1..30}; do
-            if curl -s http://localhost:3000/health; then
+            if curl -s http://localhost:5000; then
               echo "Backend is ready"
               exit 0
             fi
