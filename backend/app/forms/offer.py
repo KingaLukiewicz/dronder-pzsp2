@@ -15,13 +15,13 @@ class LocationForm(BaseModel):
     @model_validator(mode="after")
     def address_or_coords_present(self) -> Self:
         if self.address is None and (
-            self.geo_latitude is None or self.geo_longitude is None
+            self.geo_latitude is None
+            or self.geo_longitude is None
+            or self.radius is None
         ):
             raise ValueError(
-                "Location incomplete - provide either address or both longitude and latitude"
+                "Location incomplete - provide either address or all of longitude and latitude and radius"
             )
-        if self.radius is None:
-            raise ValueError("Location incomplete - provide radius")
         return self
 
 
