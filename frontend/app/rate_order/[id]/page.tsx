@@ -6,7 +6,6 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Rating from "@mui/material/Rating";
 import { ReviewPost } from "../../types";
 import { useParams } from "next/navigation";
