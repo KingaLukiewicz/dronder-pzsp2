@@ -74,12 +74,12 @@ INSERT INTO public."Groups" (client, operator, admin) VALUES
 
 INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VALUES
 (21.0059, 52.2319, 50, Null),                                                                           -- operator's service area
-(Null, Null, Null, 'Plac Defilad 1, 00-901 Warszawa, Polska');                                          -- address of the offer
+(Null, Null, Null, 'Plac Defilad 1, 00-901 Warszawa, Polska');
 
 
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
-('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 2),                   -- operator
-('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 3);                 -- client
+('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 2),
+('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 3);
 
 
 INSERT INTO public."Available_Weekdays" (weekday, operator_id) VALUES
@@ -113,8 +113,8 @@ INSERT INTO public."Offer_Parameters" (offer_id, parameter_id, value) VALUES
 (1, 'format obrazu', 'geotiff');  
 
 
-INSERT INTO public."Matches" (operator_id, offer_id) VALUES
-(1, 1);
+INSERT INTO public."Matches" (operator_id, offer_id, status) VALUES
+(1, 1, 'pending');
 
 
 END;
