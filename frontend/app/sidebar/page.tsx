@@ -27,7 +27,7 @@ const Sidebar = () => {
           onClick={() => handleReroute("/matched")}
           style={{ cursor: "pointer" }}
         >
-          Dopasowane zlecenia
+          Dopasowania
         </p>
         <p
           className={isActive("/my_orders") ? styles.Active : ""}
