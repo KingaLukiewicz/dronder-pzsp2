@@ -33,14 +33,14 @@ class ParameterForm(BaseModel):
 
 @dataclass
 class OfferForm(BaseModel):
-    offer_id: int | None = None
     description: str
-    client_id: int | None = None
-    client_name: str | None = None
     offer_type: str
-    flight_date: date | None = None
     deadline_date: date
     location: LocationForm
+    offer_id: int | None = None
+    client_id: int | None = None
+    client_name: str | None = None
+    flight_date: date | None = None
     location_id: int | None = None
     format: str | None = None
     parameters: list[ParameterForm] | None = None

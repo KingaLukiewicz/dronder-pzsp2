@@ -19,8 +19,8 @@ bp = Blueprint("offer", __name__, url_prefix="/offer")
 
 
 def insert_parameters(session: Session, parameters: list[ParameterForm]):
-    for param in parameters:
-        param = Parameter.model_validate({"name": param.name})
+    for param_form in parameters:
+        param: Parameter = Parameter.model_validate({"name": param_form.name})
         if (
             session.exec(select(Parameter).where(Parameter.name == param.name)).first()
             is None
@@ -55,7 +55,7 @@ def parse_offer(offer: Offer) -> OfferForm:
             "offer_id": offer.offer_id,
             "description": offer.description,
             "client_id": offer.client_id,
-            "client_name": offer.client.username,  # pyright: ignore[reportOptionalMemberAccess]
+            "client_name": offer.client.username,  # type: ignore
             "offer_type": offer.offer_type,
             "flight_date": offer.flight_date,
             "deadline_date": offer.deadline_date,
@@ -67,9 +67,9 @@ def parse_offer(offer: Offer) -> OfferForm:
 
 
 def attach_parameters(session: Session, offer: Offer, params: list[ParameterForm]):
-    for param in params:
+    for param_form in params:
         name = session.exec(
-            select(Parameter).where(Parameter.name == param.name)
+            select(Parameter).where(Parameter.name == param_form.name)
         ).first()
         assert name is not None
 
@@ -77,7 +77,7 @@ def attach_parameters(session: Session, offer: Offer, params: list[ParameterForm
             {
                 "offer_id": offer.offer_id,
                 "parameter_id": name.name,
-                "value": param.value,
+                "value": param_form.value,
             }
         )
         session.add(param)
