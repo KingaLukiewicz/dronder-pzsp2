@@ -16,28 +16,28 @@ const Sidebar = () => {
     <div className={styles.Sidebar}>
       <div className={styles.Nav}>
         <p
-          className={isActive("/profile") ? styles.active : ""}
+          className={isActive("/profile") ? styles.Active : ""}
           onClick={() => handleReroute("/profile")}
           style={{ cursor: "pointer" }}
         >
           Mój profil
         </p>
         <p
-          className={isActive("/matched") ? styles.active : ""}
+          className={isActive("/matched") ? styles.Active : ""}
           onClick={() => handleReroute("/matched")}
           style={{ cursor: "pointer" }}
         >
           Dopasowane zlecenia
         </p>
         <p
-          className={isActive("/my-orders") ? styles.active : ""}
+          className={isActive("/my-orders") ? styles.Active : ""}
           onClick={() => handleReroute("/my-orders")}
           style={{ cursor: "pointer" }}
         >
           Moje zlecenia
         </p>
         <p
-          className={isActive("/calendar") ? styles.active : ""}
+          className={isActive("/calendar") ? styles.Active : ""}
           onClick={() => handleReroute("/calendar")}
           style={{ cursor: "pointer" }}
         >
