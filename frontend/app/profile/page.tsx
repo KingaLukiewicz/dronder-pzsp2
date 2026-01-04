@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import Header from "../header/page";
-import Sidebar from "../sidebar/page";
+import Header from "../components/header/page";
+import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
-import ReviewBox from "../review_box/page";
+import ReviewBox from "../components/review_box/page";
 import { Tooltip, Rating } from "@mui/material";
 import { UserdataGet } from "../types";
 

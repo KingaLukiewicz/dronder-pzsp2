@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Header from "../header/page";
-import Sidebar from "../sidebar/page";
+import Header from "../components/header/page";
+import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
-import MatchedInfo from "../matched_info/page";
+import MatchedInfo from "../components/matched_info/page";
 
 export default function Matched() {
   const [sidebarVisible, setSidebarVisible] = useState(true);

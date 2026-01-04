@@ -1,7 +1,7 @@
 "use client";
 
-import Header from "../header/page";
-import Sidebar from "../sidebar/page";
+import Header from "../components/header/page";
+import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
 import { useState } from "react";
 import Accordion from "@mui/material/Accordion";
@@ -9,7 +9,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import OrderPill from "../order_pill/page";
+import OrderPill from "../components/order_pill/page";
 import AddIcon from "@mui/icons-material/Add";
 import { useRouter } from "next/navigation";
 
