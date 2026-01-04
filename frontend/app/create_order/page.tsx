@@ -5,6 +5,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { OfferPost } from "../types";
+import { OFFER_TYPE } from "../constants";
 import { useState } from "react";
 
 export default function ProfileForm() {
@@ -126,12 +127,12 @@ export default function ProfileForm() {
           onChange={(e) => setService(e.target.value)}
         >
           <option value="">-- Wybierz usługę --</option>
-          <option value="map">Ortofotomapy</option>
-          <option value="nmp">Numeryczne Modele Terenu</option>
-          <option value="nmpt">Numeryczne Modele Pokrycia Terenu</option>
-          <option value="cloud">Chmury Punktów</option>
-          <option value="mesh">Modele Mesh 3D</option>
-          <option value="scanning">Scanning Laserowy</option>
+          <option value={OFFER_TYPE.MAP}>Ortofotomapy</option>
+          <option value={OFFER_TYPE.NMP}>Numeryczne Modele Terenu</option>
+          {/* <option value="nmpt">Numeryczne Modele Pokrycia Terenu</option> */}
+          <option value={OFFER_TYPE.CLOUD}>Chmury Punktów</option>
+          <option value={OFFER_TYPE.MESH}>Modele Mesh 3D</option>
+          <option value={OFFER_TYPE.SCANNING}>Scanning Laserowy</option>
         </select>
         <h2>Parametry</h2>
         <div className={styles.ParamRow}>
