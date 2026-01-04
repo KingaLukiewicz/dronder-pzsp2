@@ -3,22 +3,35 @@
 import Header from "../components/header/page";
 import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
-import dynamic from "next/dynamic";
 import { useState } from "react";
 
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import type { EventClickArg, DateSelectArg } from "@fullcalendar/core";
-import type { ComponentType } from "react";
+import {
+  Calendar as BigCalendar,
+  Views,
+  dateFnsLocalizer,
+} from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import { pl } from "date-fns/locale";
 
-const FullCalendar = dynamic(
-  () =>
-    import("@fullcalendar/react").then(
-      (mod) => mod.default as unknown as ComponentType<any>
-    ),
-  { ssr: false }
-);
+type EventType = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+};
+
+const locales = {
+  "pl-PL": pl,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 export default function Calendar() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -27,33 +40,35 @@ export default function Calendar() {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const [events, setEvents] = useState([
-    { id: "1", title: "Ortofotomapa", start: "2026-01-12", end: "2026-01-12" },
+  const [events, setEvents] = useState<
+    { id: string; title: string; start: Date; end: Date }[]
+  >([
+    {
+      id: "1",
+      title: "Ortofotomapa",
+      start: new Date("2026-01-12"),
+      end: new Date("2026-01-12"),
+    },
     {
       id: "2",
       title: "Chmura punktów",
-      start: "2026-01-15",
-      end: "2026-01-15",
+      start: new Date("2026-01-15"),
+      end: new Date("2026-01-15"),
     },
   ]);
 
-  const handleEventClick = (clickInfo: EventClickArg) => {
-    alert(`Wybrane wydarzenie: ${clickInfo.event.title}`);
-  };
-
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
+  const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     const title = prompt("Podaj nazwę wydarzenia:");
     if (title) {
       setEvents([
         ...events,
-        {
-          id: String(events.length + 1),
-          title,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-        },
+        { id: String(events.length + 1), title, start, end },
       ]);
     }
+  };
+
+  const handleSelectEvent = (event: EventType) => {
+    alert(`Wybrane wydarzenie: ${event.title}`);
   };
 
   return (
@@ -63,14 +78,17 @@ export default function Calendar() {
       <main style={{ marginLeft: sidebarVisible ? "27vw" : "7vw" }}>
         <h1>Mój kalendarz</h1>
         <div className={styles.CalendarContainer}>
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            editable
-            selectable
+          <BigCalendar
+            localizer={localizer}
             events={events}
-            select={handleDateSelect}
-            eventClick={handleEventClick}
+            startAccessor="start"
+            endAccessor="end"
+            titleAccessor="title"
+            selectable
+            onSelectSlot={handleSelectSlot}
+            onSelectEvent={handleSelectEvent}
+            style={{ height: 600 }}
+            views={[Views.MONTH, Views.WEEK, Views.DAY]}
           />
         </div>
       </main>
