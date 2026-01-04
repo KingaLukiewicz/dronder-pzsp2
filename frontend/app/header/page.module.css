@@ -1,0 +1,44 @@
+.Header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  width: 100%;
+  height: 12vh;
+
+  margin: 0;
+  padding: 0.5rem 1rem;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  text-align: center;
+  color: #e5e5e5;
+  background-image: linear-gradient(to right, #184e77, #52b6ae);
+
+  font-size: clamp(1rem, 2vw, 3rem);
+}
+
+.HeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 1vw;
+  font-weight: bold;
+}
+
+.appLogo {
+  position: relative;
+  height: 10vh;
+  aspect-ratio: 1;
+}
+
+.HeaderRight {
+  margin-right: 1vw;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
