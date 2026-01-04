@@ -5,7 +5,11 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useRouter } from "next/navigation";
 
-const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+interface HeaderProps {
+  toggleSidebar?: () => void;
+}
+
+const Header = ({ toggleSidebar }: HeaderProps) => {
   const router = useRouter();
 
   const handleLogOut = async () => {
