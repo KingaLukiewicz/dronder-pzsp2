@@ -30,8 +30,8 @@ const Sidebar = () => {
           Dopasowane zlecenia
         </p>
         <p
-          className={isActive("/my-orders") ? styles.Active : ""}
-          onClick={() => handleReroute("/my-orders")}
+          className={isActive("/my_orders") ? styles.Active : ""}
+          onClick={() => handleReroute("/my_orders")}
           style={{ cursor: "pointer" }}
         >
           Moje zlecenia
