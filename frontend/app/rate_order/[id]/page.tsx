@@ -2,6 +2,10 @@
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Rating from "@mui/material/Rating";
 import { ReviewPost } from "../../types";
@@ -14,17 +18,8 @@ export default function RateOrderForm() {
   const offerId = Number(id);
   const [rating, setRating] = useState<number | null>(0);
   const [description, setDescription] = useState("");
-  const [state, setState] = useState({
-    completed: false,
-  });
+  const [completed, setCompleted] = useState<boolean | null>(null);
   const router = useRouter();
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
-  };
 
   const handleSubmit = async () => {
     try {
@@ -59,27 +54,48 @@ export default function RateOrderForm() {
     }
   };
 
-  const { completed } = state;
   return (
     <div className={styles.Form}>
       <h1>Oceń zlecenie</h1>
       <main className={styles.MainContent}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={completed}
-              onChange={handleChange}
-              name="completed"
-              sx={{
-                color: "#ffffff",
-                "&.Mui-checked": {
-                  color: "#ffffff",
-                },
-              }}
+        <FormControl component="fieldset">
+          <FormLabel
+            sx={{ color: "#ffffff", "&.Mui-focused": { color: "#ffffff" } }}
+          >
+            Czy zlecenie odbyło się?
+          </FormLabel>
+          <RadioGroup
+            row
+            value={completed === null ? "" : completed ? "yes" : "no"}
+            onChange={(e) => setCompleted(e.target.value === "yes")}
+          >
+            <FormControlLabel
+              value="yes"
+              control={
+                <Radio
+                  sx={{
+                    color: "#ffffff",
+                    "&.Mui-checked": { color: "#ffffff" },
+                  }}
+                />
+              }
+              label="Tak"
             />
-          }
-          label="Czy zlecenie odbyło się?"
-        />
+            <FormControlLabel
+              value="no"
+              control={
+                <Radio
+                  sx={{
+                    color: "#ffffff",
+                    "&.Mui-checked": { color: "#ffffff" },
+                  }}
+                />
+              }
+              label="Nie"
+            />
+          </RadioGroup>
+        </FormControl>
+
         <h2>Twoja ocena</h2>
         <Rating
           name="simple-controlled"
