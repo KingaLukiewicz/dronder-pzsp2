@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public."Users"
     email text NOT NULL,
     username text NOT NULL,
     password text NOT NULL,
+    description text,
     phone_number text NOT NULL,
     location_id bigint,
     group_id bigint NOT NULL
@@ -55,7 +56,10 @@ CREATE TABLE IF NOT EXISTS public."Matches"
 (
     match_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     operator_id bigint NOT NULL,
-    offer_id bigint NOT NULL
+    offer_id bigint NOT NULL,
+    status text NOT NULL
+    CONSTRAINT matches_status_check
+        CHECK (status IN ('pending', 'interested', 'rejected', 'matched', 'finalized'))
 );
 
 CREATE TABLE IF NOT EXISTS public."Offers"
