@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 from app.forms.offer import LocationForm, OfferForm, ParameterForm
 from app.models import (
     Locations,
+    OfferTypes,
     Users as User,
     Offers as Offer,
     OfferParameters as OfferParameter,
@@ -137,3 +138,16 @@ def get_offers(offer_id: int | None = None):
         ret.append(parse_offer(offer))
 
     return jsonify(ret), HTTPStatus.OK
+
+@bp.get("/types")
+def get_offer_types():
+    session = get_db_session()
+    types = session.exec(select(OfferTypes.name)).all()
+    return jsonify(types), HTTPStatus.OK
+
+
+@bp.get("/parameters")
+def get_parameters_types():
+    session = get_db_session()
+    parameters = session.exec(select(Parameter.name)).all()
+    return jsonify(parameters), HTTPStatus.OK
