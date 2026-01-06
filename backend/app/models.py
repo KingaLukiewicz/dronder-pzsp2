@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Optional
 import datetime
 import decimal
@@ -90,6 +92,7 @@ class Parameters(SQLModel, table=True):
 
 
 class TypeParameters(SQLModel, table=True):
+    __tablename__ = "Type_Parameters"
     type_name: str = Field(foreign_key="Offer_Types.name", primary_key=True)
     parameter_name: str = Field(foreign_key="Parameters.name", primary_key=True)
 
