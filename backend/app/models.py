@@ -1,5 +1,3 @@
-# type: ignore
-
 from typing import Optional
 import datetime
 import decimal
