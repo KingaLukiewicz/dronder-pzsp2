@@ -58,8 +58,6 @@ CREATE TABLE IF NOT EXISTS public."Matches"
     operator_id bigint NOT NULL,
     offer_id bigint NOT NULL,
     status text NOT NULL
-    CONSTRAINT matches_status_check
-        CHECK (status IN ('pending', 'interested', 'rejected', 'matched', 'finalized'))
 );
 
 CREATE TABLE IF NOT EXISTS public."Offers"
@@ -105,6 +103,13 @@ CREATE TABLE IF NOT EXISTS public."Offer_Types"
 (
     name text NOT NULL,
     PRIMARY KEY (name)
+);
+
+CREATE TABLE IF NOT EXISTS public."Operator_Products"
+(
+    operator_products_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    operator_id bigint NOT NULL,
+    offer_type_name text NOT NULL
 );
 
 ALTER TABLE IF EXISTS public."Users"
@@ -206,6 +211,20 @@ ALTER TABLE IF EXISTS public."Type_Parameters"
 ALTER TABLE IF EXISTS public."Type_Parameters"
     ADD FOREIGN KEY (parameter_name)
     REFERENCES public."Parameters" (name) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE IF EXISTS public."Operator_Products"
+    ADD FOREIGN KEY (operator_id)
+    REFERENCES public."Users" (user_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+ALTER TABLE IF EXISTS public."Operator_Products"
+    ADD FOREIGN KEY (offer_type_name)
+    REFERENCES public."Offer_Types" (name) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
