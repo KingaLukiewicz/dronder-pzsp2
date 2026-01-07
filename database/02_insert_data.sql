@@ -270,7 +270,30 @@ INSERT INTO public."Matches" (operator_id, offer_id, status) VALUES
 (1, 8, 'finalized'),
 (1, 9, 'finalized');
 
-
+INSERT INTO public."Operator_Products" (operator_id, offer_type_name) VALUES
+(1, 'Ortofotomapa'),
+(1, 'Numeryczne'),
+(1, 'Chmura punktów'),
+(1, 'Modele mesh 3D'),
+(2, 'Ortofotomapa'),
+(2, 'Numeryczne'),
+(2, 'Chmura punktów'),
+(2, 'Modele mesh 3D'),
+(3, 'Ortofotomapa'),
+(3, 'Numeryczne'),
+(3, 'Chmura punktów'),
+(3, 'Modele mesh 3D'),
+(4, 'Ortofotomapa'),
+(4, 'Numeryczne'),
+(4, 'Chmura punktów'),
+(4, 'Modele mesh 3D'),
+(6, 'Ortofotomapa'),
+(6, 'Numeryczne'),
+(6, 'Chmura punktów'),
+(6, 'Modele mesh 3D'),
+(5, 'Skaning laserowy'),
+(2, 'Skaning laserowy'),
+(1, 'Skaning laserowy');
 
 UPDATE public."Offers"
 SET
