@@ -14,15 +14,15 @@ class LocationForm(BaseModel):
 
     @model_validator(mode="after")
     def address_or_coords_present(self) -> Self:
-        if self.address is None and (
-            self.geo_latitude is None
-            or self.geo_longitude is None
-            or self.radius is None
+        if self.address is not None or (
+            self.geo_latitude is not None
+            and self.geo_longitude is not None
+            and self.radius is not None
         ):
-            raise ValueError(
-                "Location incomplete - provide either address or all of longitude and latitude and radius"
-            )
-        return self
+            return self
+        raise ValueError(
+            "Location incomplete - provide either address or all of longitude and latitude and radius"
+        )
 
 
 @dataclass
@@ -46,7 +46,7 @@ class OfferForm(BaseModel):
     parameters: list[ParameterForm] | None = None
     status: str = "new"
 
-    @field_validator("deadline_date", mode="before")
+    @field_validator("deadline_date", "flight_date", mode="before")
     @classmethod
     def parse_http_date(cls, v: Any):
         if isinstance(v, str):
