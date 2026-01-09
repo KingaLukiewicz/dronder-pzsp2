@@ -249,9 +249,11 @@ class Matches(SQLModel, table=True):
         PrimaryKeyConstraint("match_id", name="Matches_pkey"),
     )
 
-    match_id: int = Field(
-        sa_column=Column("match_id", BigInteger, Identity(), primary_key=True)
+    match_id: int | None = Field(
+        sa_column=Column("match_id", BigInteger, Identity(), primary_key=True, default=None),
+        default=None
     )
+    status: str = Field()
     operator_id: int = Field(
         sa_column=Column("operator_id", BigInteger, nullable=False)
     )
@@ -291,3 +293,11 @@ class OfferParameters(SQLModel, table=True):
 
     offer: Optional["Offers"] = Relationship(back_populates="Offer_Parameters")
     parameter: Optional["Parameters"] = Relationship(back_populates="Offer_Parameters")
+
+
+class OperatorProducts(SQLModel, table=True):
+    __tablename__ = "Operator_Products"
+
+    operator_products_id: int | None = Field(default=None, primary_key=True)
+    operator_id: int = Field(foreign_key="Users.user_id")
+    offer_type_name: str = Field(foreign_key="Offer_Types.name")

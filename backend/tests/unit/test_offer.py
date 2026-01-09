@@ -15,6 +15,7 @@ def test_offer_endpoints(client: FlaskClient):
             "description": "Supertesting",
             "offer_type": "Ortofotomapa",
             "deadline_date": date(2025, 10, 10).strftime("%a, %d %b %Y %H:%M:%S GMT"),
+            "flight_date": date(2025, 10, 10).strftime("%a, %d %b %Y %H:%M:%S GMT"),
             "location": {"address": "Sosnowiec", "radius": 250},
             "format": "your mom",
             "parameters": [
