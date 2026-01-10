@@ -1,0 +1,91 @@
+from http import HTTPStatus
+import logging
+from flask import Blueprint, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required  # type: ignore
+from sqlmodel import select, func
+from pydantic import ValidationError
+from sqlmodel import select
+
+from app.db import get_db_session
+from app.models import Users as User, Groups as Group, Offers as Offer
+
+
+bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+
+@bp.get("/data")
+@jwt_required()
+def get_admindata():
+    user_id = int(get_jwt_identity())
+    with get_db_session() as session:
+        user = session.exec(select(User).where(User.user_id == user_id)).one_or_none()
+        if user is None:
+            logging.info(
+                "Request to data of nonexistent user.",
+                stack_info=True,
+                extra={"user_id": user_id},
+            )
+            return jsonify({"reason": "non existent"}), HTTPStatus.NOT_FOUND
+        if not user.group.admin:
+            logging.info(
+                "Unauthorized admin access attempt",
+                stack_info=True,
+                extra={"user_id": user_id},
+            )
+            return jsonify({"reason": "Admin privileges required"}), HTTPStatus.FORBIDDEN
+
+        grouped_users = session.exec(select(User, Group).join(Group)).all()
+
+        admins_count = sum(1 for user, group in grouped_users if group.admin)
+        clients_count = sum(1 for user, group in grouped_users if group.client)
+        operators_count = sum(1 for user, group in grouped_users if group.operator)
+
+        offer_count = session.exec(select(func.count()).select_from(Offer)).one()
+
+        operator_ratings = session.exec(
+            select(
+                Offer.operator_rating,
+                func.count(Offer.operator_rating).label("count")
+            )
+            .where(Offer.operator_rating.is_not(None))
+            .group_by(Offer.operator_rating)
+        ).all()
+
+        operator_rating_stats = {
+            rating: count for rating, count in operator_ratings
+        }
+
+        client_ratings = session.exec(
+            select(
+                Offer.client_rating,
+                func.count(Offer.client_rating).label("count")
+            )
+            .where(Offer.client_rating.is_not(None))
+            .group_by(Offer.client_rating)
+        ).all()
+
+        client_rating_stats = {
+            rating: count for rating, count in client_ratings
+        }
+
+        offer_by_deadline = session.exec(
+            select(
+                Offer.deadline_date,
+                func.count()
+            ).group_by(Offer.deadline_date)
+        ).all()
+
+        offer_by_deadline_json = {
+           deadline.isoformat(): count for deadline, count in offer_by_deadline
+        }
+
+        return jsonify({
+                    "number_of_admins": admins_count,
+                    "number_of_clients": clients_count,
+                    "number_of_operators": operators_count,
+                    "operator_rating_stats": operator_rating_stats,
+                    "client_rating_stats": client_rating_stats,
+                    "number_of_offers": offer_count,
+                    "number_of_offers_by_deadline": offer_by_deadline_json
+                }
+            ), HTTPStatus.OK
