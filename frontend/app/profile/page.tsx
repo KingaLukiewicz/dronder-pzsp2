@@ -62,6 +62,24 @@ export default function Profile() {
               <div className={styles.Info}>
                 <h2>{userData.username}</h2>
                 <p>{userData.description}</p>
+                {userData.role === "operator" && userData.location && (
+                  <>
+                    <h3>Lokalizacja</h3>
+                    <p>Adres: {userData.location.address}</p>
+                    <p>Zasięg: {userData.location.radius}</p>
+                  </>
+                )}
+                {userData.role === "operator" &&
+                  userData.products.length > 0 && (
+                    <>
+                      <h3>Oferowane produkty</h3>
+                      <ul>
+                        {userData.products.map((product, index) => (
+                          <li key={index}>{product}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
                 {userData.reviews && (
                   <>
                     <div className={styles.Rating}>
