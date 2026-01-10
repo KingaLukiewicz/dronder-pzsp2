@@ -76,7 +76,7 @@ export default function Profile() {
                   <>
                     <h3>Lokalizacja</h3>
                     <p>Adres: {userData.location.address}</p>
-                    <p>Zasięg: {userData.location.radius}</p>
+                    <p>Zasięg: {userData.location.radius} km</p>
                   </>
                 )}
                 {userData.role === "operator" &&
