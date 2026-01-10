@@ -13,6 +13,7 @@ from app.notifications import push_notifications
 class MatchingStatus(Enum):
     PENDING = "pending"
     INTERESTED = "interested"
+    NOT_INTERESTED = "not_interested"
     MATCHED = "matched"
     FINALIZED = "finalized"
 

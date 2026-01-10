@@ -75,6 +75,27 @@ def accept_offer(offer_id: int):
         return "", HTTPStatus.OK
 
 
+@bp.post("/decline/offer/<int:offer_id>")
+@jwt_required()
+def decline_offer(offer_id: int):
+    user_id: int = int(get_jwt_identity())
+    with get_db_session() as session:
+        match = session.exec(
+            select(Matches)
+            .select_from(Offers)
+            .join(Matches)
+            .join(Users)
+            .where(Offers.offer_id == offer_id)
+            .where(Users.user_id == user_id)
+        ).one_or_none()
+
+        if match is None:
+            return "", HTTPStatus.NOT_FOUND
+        match.status = MatchingStatus.NOT_INTERESTED.value
+        session.commit()
+        return "", HTTPStatus.OK
+
+
 @bp.post("/accept/operator/<int:offer_id>/<int:operator_id>")
 @jwt_required()
 def accept_operator(offer_id: int, operator_id: int):
