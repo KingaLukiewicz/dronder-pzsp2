@@ -7,6 +7,7 @@ type Review = {
   rating: number | null;
   review: string | null;
   reviewer: string | null;
+  review_date: string | null;
 };
 
 type ReviewBoxProps = {
