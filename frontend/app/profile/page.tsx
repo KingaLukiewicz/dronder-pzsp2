@@ -6,6 +6,8 @@ import styles from "./page.module.css";
 import ReviewBox from "../components/review_box/page";
 import { Tooltip, Rating } from "@mui/material";
 import { UserdataGet } from "../types";
+import EditIcon from "@mui/icons-material/Edit";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -16,9 +18,14 @@ export default function Profile() {
     totalReviews > 0
       ? userData!.reviews!.reduce((sum, r) => sum + r.rating, 0) / totalReviews
       : 0;
+  const router = useRouter();
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+  };
+
+  const handleEdit = () => {
+    router.push("/profile_form");
   };
 
   useEffect(() => {
@@ -59,6 +66,9 @@ export default function Profile() {
         {userData && (
           <>
             <div className={styles.InfoContainer}>
+              <div className={styles.EditIcon} onClick={handleEdit}>
+                <EditIcon />
+              </div>
               <div className={styles.Info}>
                 <h2>{userData.username}</h2>
                 <p>{userData.description}</p>

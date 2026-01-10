@@ -15,6 +15,7 @@
 }
 
 .InfoContainer {
+  position: relative;
   margin-top: 2vh;
   background-color: #93d9e6;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
@@ -72,4 +73,12 @@
   overflow-y: scroll;
   margin-top: 2vh;
   width: 90%;
+}
+
+.EditIcon {
+  position: absolute;
+  top: 3vh;
+  right: 3vh;
+  cursor: pointer;
+  z-index: 1000;
 }
