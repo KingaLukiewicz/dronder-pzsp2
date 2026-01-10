@@ -11,6 +11,7 @@ import { UserdataGet } from "../types";
 
 export default function ProfileForm() {
   const [userData, setUserData] = useState<UserdataGet | null>(null);
+  const [role, setRole] = useState("");
   const [userName, setUserName] = useState("");
   const [aboutMe, setAboutMe] = useState("");
   const [address, setAddress] = useState("");
@@ -43,6 +44,7 @@ export default function ProfileForm() {
         const data: UserdataGet = await res.json();
         setUserData(data);
 
+        setRole(data.role || "");
         setUserName(data.username || "");
         setAboutMe(data.description || "");
         setAddress(data.location?.address || "");
@@ -120,7 +122,7 @@ export default function ProfileForm() {
         products: products.length > 0 ? products : [],
       };
 
-      const res = await fetch("http://127.0.0.1:5001/user/data", {
+      const res = await fetch("http://127.0.0.1:5000/user/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,47 +165,52 @@ export default function ProfileForm() {
           value={aboutMe}
           onChange={(e) => setAboutMe(e.target.value)}
         />
-        <h2>Oferowane produkty</h2>
-        <FormGroup>
-          {offerTypes.map((offer) => (
-            <FormControlLabel
-              key={offer}
-              control={
-                <Checkbox
-                  checked={selectedOffers[offer] || false}
-                  onChange={handleChange}
-                  name={offer}
-                  sx={{
-                    color: "#ffffff",
-                    "&.Mui-checked": {
-                      color: "#ffffff",
-                    },
-                  }}
+        {role == "operator" && (
+          <>
+            <h2>Oferowane produkty</h2>
+            <FormGroup>
+              {offerTypes.map((offer) => (
+                <FormControlLabel
+                  key={offer}
+                  control={
+                    <Checkbox
+                      checked={selectedOffers[offer] || false}
+                      onChange={handleChange}
+                      name={offer}
+                      sx={{
+                        color: "#ffffff",
+                        "&.Mui-checked": {
+                          color: "#ffffff",
+                        },
+                      }}
+                    />
+                  }
+                  label={offer}
                 />
-              }
-              label={offer}
-            />
-          ))}
-        </FormGroup>
-        <h2>Lokalizacja</h2>
-        <div className={styles.LocationRow}>
-          <label htmlFor="address">Adres:</label>
-          <input
-            className={styles.Input}
-            id="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <div className={styles.LocationRow}>
-          <label htmlFor="range">Zasięg (km):</label>
-          <input
-            className={styles.Input}
-            id="range"
-            value={range}
-            onChange={(e) => setRange(e.target.value)}
-          />
-        </div>
+              ))}
+            </FormGroup>
+            <h2>Lokalizacja</h2>
+            <div className={styles.LocationRow}>
+              <label htmlFor="address">Adres:</label>
+              <input
+                className={styles.Input}
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
+            <div className={styles.LocationRow}>
+              <label htmlFor="range">Zasięg (km):</label>
+              <input
+                className={styles.Input}
+                id="range"
+                value={range}
+                onChange={(e) => setRange(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
         <div className={styles.ButtonRow}>
           <Button
             className={styles.Button}
