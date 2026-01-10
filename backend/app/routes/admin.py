@@ -53,6 +53,7 @@ def get_admindata():
 
         operator_rating_stats = {
             rating: count for rating, count in operator_ratings
+            if rating is not None
         }
 
         client_ratings = session.exec(
@@ -66,26 +67,28 @@ def get_admindata():
 
         client_rating_stats: Dict[int, int] = {
             rating: count for rating, count in client_ratings
+            if rating is not None
         }
 
         offer_by_deadline: List[tuple[date, int]] = session.exec(
             select(  # type: ignore
                 Offer.deadline_date,
-                func.count().label("count")  # type: ignore[arg-type]
+                func.count(Offer.deadline_date).label("count")  # type: ignore[arg-type]
             ).group_by(Offer.deadline_date)
         ).all()
 
         offer_by_deadline_json: Dict[str, int] = {
            deadline.isoformat(): count for deadline, count in offer_by_deadline
+           if deadline is not None
         }
 
         return jsonify({
-                    "number_of_admins": admins_count,
-                    "number_of_clients": clients_count,
-                    "number_of_operators": operators_count,
-                    "operator_rating_stats": operator_rating_stats,
-                    "client_rating_stats": client_rating_stats,
-                    "number_of_offers": offer_count,
-                    "number_of_offers_by_deadline": offer_by_deadline_json
-                }
-            ), HTTPStatus.OK
+                "number_of_admins": admins_count,
+                "number_of_clients": clients_count,
+                "number_of_operators": operators_count,
+                "operator_rating_stats": operator_rating_stats,
+                "client_rating_stats": client_rating_stats,
+                "number_of_offers": offer_count,
+                "number_of_offers_by_deadline": offer_by_deadline_json
+            }
+        ), HTTPStatus.OK
