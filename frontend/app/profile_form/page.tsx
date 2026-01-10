@@ -61,6 +61,10 @@ export default function ProfileForm() {
         throw new Error("Brak tokena. Zaloguj się ponownie.");
       }
 
+      const products = Object.keys(selectedOffers).filter(
+        (key) => selectedOffers[key]
+      );
+
       const payload: UserdataPost = {
         description: aboutMe || undefined,
         location:
@@ -70,9 +74,10 @@ export default function ProfileForm() {
                 radius: range ? Number(range) : undefined,
               }
             : undefined,
+        products: products.length > 0 ? products : [],
       };
 
-      const res = await fetch("http://127.0.0.1:5001/user/data", {
+      const res = await fetch("http://127.0.0.1:5000/user/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
