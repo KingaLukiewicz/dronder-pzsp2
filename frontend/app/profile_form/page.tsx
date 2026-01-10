@@ -6,25 +6,50 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { UserdataPost } from "../types";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProfileForm() {
   const [aboutMe, setAboutMe] = useState("");
   const [address, setAddress] = useState("");
   const [range, setRange] = useState("");
-  const [state, setState] = useState({
-    map: false,
-    nmp: false,
-    nmpt: false,
-    cloud: false,
-    mesh: false,
-    scanning: false,
-  });
+  const [offerTypes, setOfferTypes] = useState<string[]>([]);
+  const [selectedOffers, setSelectedOffers] = useState<Record<string, boolean>>(
+    {}
+  );
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch("http://127.0.0.1:5000/offer/types", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data: string[] = await res.json();
+
+        setOfferTypes(data);
+
+        const initialState: Record<string, boolean> = {};
+        data.forEach((o) => (initialState[o] = false));
+        setSelectedOffers(initialState);
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
+    setSelectedOffers({
+      ...selectedOffers,
       [event.target.name]: event.target.checked,
     });
   };
@@ -72,7 +97,6 @@ export default function ProfileForm() {
     }
   };
 
-  const { map, nmp, nmpt, cloud, mesh, scanning } = state;
   return (
     <div className={styles.Form}>
       <h1>Uzupełnij swój profil</h1>
@@ -87,102 +111,25 @@ export default function ProfileForm() {
         />
         <h2>Oferowane produkty</h2>
         <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={map}
-                onChange={handleChange}
-                name="map"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
+          {offerTypes.map((offer) => (
+            <FormControlLabel
+              key={offer}
+              control={
+                <Checkbox
+                  checked={selectedOffers[offer] || false}
+                  onChange={handleChange}
+                  name={offer}
+                  sx={{
                     color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Ortofotomapy"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={nmp}
-                onChange={handleChange}
-                name="nmp"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Numeryczne Modele Terenu"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={nmpt}
-                onChange={handleChange}
-                name="nmpt"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Numeryczne Modele Pokrycia Terenu"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={cloud}
-                onChange={handleChange}
-                name="cloud"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Chmury Punktów"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={mesh}
-                onChange={handleChange}
-                name="mesh"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Modele Mesh 3D"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={scanning}
-                onChange={handleChange}
-                name="scanning"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Scanning Laserowy"
-          />
+                    "&.Mui-checked": {
+                      color: "#ffffff",
+                    },
+                  }}
+                />
+              }
+              label={offer}
+            />
+          ))}
         </FormGroup>
         <h2>Lokalizacja</h2>
         <div className={styles.LocationRow}>
