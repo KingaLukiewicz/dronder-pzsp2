@@ -124,7 +124,9 @@ export default function Profile() {
           <option value="worst">Od najgorszych</option>
         </select>
         <div className={styles.Reviews}>
-          <ReviewBox />
+          {sortedReviews.map((review, index) => (
+            <ReviewBox key={index} review={review} />
+          ))}
         </div>
       </main>
     </div>
