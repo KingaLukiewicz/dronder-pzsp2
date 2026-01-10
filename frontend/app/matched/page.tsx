@@ -10,7 +10,12 @@ export default function Matched() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [offers, setOffers] = useState<OfferForm[]>([]);
   const [operators, setOperators] = useState<UserdataGet[]>([]);
-  const role = sessionStorage.getItem("role");
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedRole = sessionStorage.getItem("role");
+    setRole(storedRole);
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -32,7 +37,7 @@ export default function Matched() {
         });
         const data: OfferForm[] = await res.json();
 
-        setOffers(data);
+        setOffers(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch", error);
       }
@@ -57,7 +62,7 @@ export default function Matched() {
         });
         const data: UserdataGet[] = await res.json();
 
-        setOperators(data);
+        setOperators(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch", error);
       }
