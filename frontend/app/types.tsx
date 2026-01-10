@@ -56,7 +56,11 @@ export type UserdataGet = {
   description: string;
   role: string;
   location: Loc;
-  reviews: Array<Review>;
+  phone_number: string;
+  email: string;
+  reviews: Review[];
+  products: string[];
+  user_id: number;
 };
 
 export type UserdataPost = {
@@ -64,6 +68,7 @@ export type UserdataPost = {
   description?: string;
   role?: string;
   location?: Loc;
+  products?: string[];
 };
 
 export type Register = {
