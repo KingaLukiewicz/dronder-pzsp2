@@ -38,6 +38,26 @@ export type OfferPost = {
   status?: string;
 };
 
+export type ParameterForm = {
+  name: string;
+  value: string;
+};
+
+export type OfferForm = {
+  description: string;
+  offer_type: string;
+  deadline_date: Date;
+  location: Loc;
+  offer_id: number;
+  client_id: number;
+  client_name: string;
+  flight_date?: Date;
+  location_id: number;
+  format: string;
+  parameters: ParameterForm[];
+  status: string;
+};
+
 export type ReviewPost = {
   offer_id: number;
   rating?: number;
