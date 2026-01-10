@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Any, cast
+from typing import Any
 from flask_socketio import SocketIO, join_room, leave_room, rooms  # pyright: ignore[reportUnknownVariableType]
 from flask_jwt_extended import decode_token  # pyright: ignore[reportUnknownVariableType]
 from flask import request
@@ -27,9 +27,8 @@ def connect_user(auth: dict[str, Any]):
 
 @socketio.on("disconnect")
 def disconnect_user():
-    room = list(filter(lambda name: name != request.sid, rooms()))[0]  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType, reportAttributeAccessIssue, reportUnknownMemberType, reportUnknownVariableType]
-    room = cast(str, room)
-    user_id = int(room)
+    room: str = list(filter(lambda name: name != request.sid, rooms()))[0]  # type: ignore
+    user_id = int(room) # type: ignore
     leave_room(room)
     connected_users.subtract([user_id])
     if connected_users.get(user_id, 0) <= 0:
