@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import { FormControlLabel } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
 
 export default function Register() {
+  const [isOperator, setIsOperator] = useState<boolean>(false);
+  const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
@@ -35,11 +39,12 @@ export default function Register() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
           username,
-          phone_number,
+          email,
           password,
           re_password,
+          phone_number,
+          role,
         }),
       });
 
@@ -67,6 +72,11 @@ export default function Register() {
     redirect("/login");
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOperator(event.target.checked);
+    isOperator ? setRole("operator") : setRole("user");
+  };
+
   return (
     <div className={styles.RegisterContainer}>
       <div className={styles.RightBox} />
@@ -79,6 +89,24 @@ export default function Register() {
             style={{ objectFit: "contain" }}
           />
         </div>
+        <div className={styles.Checkbox}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isOperator}
+                onChange={handleChange}
+                name="operator"
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#168aad",
+                  },
+                }}
+              />
+            }
+            label={"Zaznacz jeśli tworzysz konto jako operator"}
+          />
+        </div>
+
         <TextField
           className={styles.Input}
           label="nazwa użytkownika"
@@ -92,6 +120,7 @@ export default function Register() {
           variant="outlined"
           value={phone_number}
           onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="np. +48123456789"
         />
         <TextField
           className={styles.Input}
