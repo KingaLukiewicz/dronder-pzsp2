@@ -6,6 +6,7 @@ from sqlmodel import select, func
 from typing import List, Tuple, Dict
 from datetime import date
 
+
 from app.db import get_db_session
 from app.models import Users as User, Groups as Group, Offers as Offer
 
@@ -73,7 +74,7 @@ def get_admindata():
         offer_by_deadline: List[tuple[date, int]] = session.exec(
             select(  # type: ignore
                 Offer.deadline_date,
-                func.count(Offer.deadline_date).label("count")  # type: ignore[arg-type]
+                func.count().label("count")  # type: ignore[arg-type]
             ).group_by(Offer.deadline_date)
         ).all()
 
