@@ -74,7 +74,7 @@ def get_userdata(user_id: int | None = None):
                         "offer_id": t[0].offer_id,
                         "reviewer": t[0].client.username,  # type: ignore
                         "rating": t[2],
-                        "review_data": t[0].deadline_date,
+                        "review_date": t[0].deadline_date.strftime("%a, %d %b %G %T %Z"),
                         "review": t[1]
                     }
                 ),
@@ -99,7 +99,7 @@ def get_userdata(user_id: int | None = None):
                         "reviewer": t[0].username,  # type: ignore
                         "rating": t[2],
                         "review": t[1],
-                        "review_data": t[3].deadline_date
+                        "review_date": t[3].deadline_date.strftime("%a, %d %b %G %T %Z")
                     }
                 ),
                 session.exec(

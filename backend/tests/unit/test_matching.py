@@ -66,7 +66,7 @@ def test_order_mathing_sequence(client: FlaskClient):
     assert finalized.status_code == HTTPStatus.OK
     assert finalized.json[0]["offer_id"] == offer.offer_id  # pyright: ignore[reportOptionalSubscript]
 
-    review = ReviewForm.model_validate(
+    orig = ReviewForm.model_validate(
         {
             "offer_id": offer.offer_id,
             "rating": randint(1, 5),
@@ -75,7 +75,7 @@ def test_order_mathing_sequence(client: FlaskClient):
     )
     ret = client.post(
         "/review/",
-        json=review.model_dump(),
+        json=orig.model_dump(),
         headers=from_token(operator_access_token),
     )
     assert ret.status_code == HTTPStatus.OK
@@ -91,10 +91,11 @@ def test_order_mathing_sequence(client: FlaskClient):
         review = ReviewForm.model_validate(r)
         received.append(review)
 
+    assert received[0].offer_id == orig.offer_id
+    assert received[0].rating == orig.rating
+    assert received[0].review == orig.review
 
-    assert received == [review]
-
-    review = ReviewForm.model_validate(
+    orig = ReviewForm.model_validate(
         {
             "offer_id": offer.offer_id,
             "rating": randint(1, 5),
@@ -103,7 +104,7 @@ def test_order_mathing_sequence(client: FlaskClient):
     )
     ret = client.post(
         "/review/",
-        json=review.model_dump(),
+        json=orig.model_dump(),
         headers=from_token(user_access_token),
     )
     assert ret.status_code == HTTPStatus.OK
@@ -119,5 +120,6 @@ def test_order_mathing_sequence(client: FlaskClient):
         review = ReviewForm.model_validate(r)
         received.append(review)
 
-
-    assert received == [review]
+    assert received[0].offer_id == orig.offer_id
+    assert received[0].rating == orig.rating
+    assert received[0].review == orig.review
