@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Any
+from typing import Any, cast
 from flask_socketio import SocketIO, join_room, leave_room, rooms  # pyright: ignore[reportUnknownVariableType]
 from flask_jwt_extended import decode_token  # pyright: ignore[reportUnknownVariableType]
 from flask import request
