@@ -5,7 +5,7 @@ import styles from "./page.module.css";
 import React, { PropsWithChildren, createContext, useContext } from "react";
 
 type MatchedInfoContext = {
-  client_id: number;
+  user_id: number;
   title: string;
   description: string;
   rating?: number;
@@ -25,7 +25,7 @@ function useMatchedInfoContext() {
 }
 
 type Props = PropsWithChildren & {
-  client_id: number;
+  user_id: number;
   title: string;
   description: string;
   rating?: number;
@@ -39,7 +39,7 @@ type MatchedInfoComponent = React.FC<Props> & {
 
 const MatchedInfo: MatchedInfoComponent = ({
   children,
-  client_id,
+  user_id,
   title,
   description,
   rating,
@@ -48,7 +48,7 @@ const MatchedInfo: MatchedInfoComponent = ({
 }) => {
   return (
     <MatchedInfoContext.Provider
-      value={{ client_id, title, description, rating, vote_count }}
+      value={{ user_id, title, description, rating, vote_count }}
     >
       <div className={styles.MatchedInfo}>
         <div className={styles.TitleRow}>
