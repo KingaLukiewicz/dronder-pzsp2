@@ -7,8 +7,11 @@ import Checkbox from "@mui/material/Checkbox";
 import { UserdataPost } from "../types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { UserdataGet } from "../types";
 
 export default function ProfileForm() {
+  const [userData, setUserData] = useState<UserdataGet | null>(null);
+  const [userName, setUserName] = useState("");
   const [aboutMe, setAboutMe] = useState("");
   const [address, setAddress] = useState("");
   const [range, setRange] = useState("");
@@ -17,6 +20,39 @@ export default function ProfileForm() {
     {}
   );
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch("http://127.0.0.1:5000/user/data", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
+        const data: UserdataGet = await res.json();
+        setUserData(data);
+
+        setUserName(data.username || "");
+        setAboutMe(data.description || "");
+        setAddress(data.location?.address || "");
+        setRange(data.location?.radius?.toString() || "");
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -35,10 +71,6 @@ export default function ProfileForm() {
         const data: string[] = await res.json();
 
         setOfferTypes(data);
-
-        const initialState: Record<string, boolean> = {};
-        data.forEach((o) => (initialState[o] = false));
-        setSelectedOffers(initialState);
       } catch (error) {
         console.error("Failed to fetch", error);
       }
@@ -46,6 +78,16 @@ export default function ProfileForm() {
 
     fetchOffers();
   }, []);
+
+  useEffect(() => {
+    if (userData && offerTypes.length > 0) {
+      const initialState: Record<string, boolean> = {};
+      offerTypes.forEach((o) => {
+        initialState[o] = userData.products?.includes(o) || false;
+      });
+      setSelectedOffers(initialState);
+    }
+  }, [userData, offerTypes]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOffers({
@@ -66,6 +108,7 @@ export default function ProfileForm() {
       );
 
       const payload: UserdataPost = {
+        username: userName || undefined,
         description: aboutMe || undefined,
         location:
           address || range
@@ -77,7 +120,7 @@ export default function ProfileForm() {
         products: products.length > 0 ? products : [],
       };
 
-      const res = await fetch("http://127.0.0.1:5000/user/data", {
+      const res = await fetch("http://127.0.0.1:5001/user/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,6 +149,12 @@ export default function ProfileForm() {
     <div className={styles.Form}>
       <h1>Uzupełnij swój profil</h1>
       <main className={styles.MainContent}>
+        <h2>Nazwa użytkownika</h2>
+        <input
+          className={styles.InputLong}
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
         <h2>O mnie</h2>
         <textarea
           className={styles.AboutMe}
