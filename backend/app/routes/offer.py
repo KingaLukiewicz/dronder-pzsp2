@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import logging
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required  # type: ignore
 from pydantic import ValidationError
@@ -8,6 +9,8 @@ from app.matching import MatchingStatus
 from app.models import (
     Locations,
     Matches,
+    OfferTypes,
+    TypeParameters,
     Users as User,
     Offers as Offer,
     OfferParameters as OfferParameter,
@@ -207,3 +210,35 @@ def finalize_offer(offer_id: int):
         match.status = MatchingStatus.FINALIZED.value
         session.commit()
         return "", HTTPStatus.OK
+
+
+@bp.get("/types")
+def get_offer_types():
+    with get_db_session() as session:
+        types = session.exec(select(OfferTypes.name)).all()
+        return jsonify(types), HTTPStatus.OK
+
+
+@bp.get("/parameters/")
+@bp.get("/parameters/<string:offer_type>")
+def get_parameters_types(offer_type: str | None = None):
+    with get_db_session() as session:
+        if offer_type is None:
+            parameters = session.exec(
+                select(TypeParameters.type_name, TypeParameters.parameter_name)
+            ).all()
+            logging.warning(list(map(lambda row: (row[0], row[1]), parameters)))
+            return jsonify(
+                list(map(lambda row: (row[0], row[1]), parameters))
+            ), HTTPStatus.OK
+        else:
+            logging.warning(offer_type)
+            parameters = session.exec(
+                select(TypeParameters.parameter_name).where(
+                    TypeParameters.type_name == offer_type
+                )
+            ).all()
+            logging.warning(list(parameters))
+            return jsonify(
+                list(parameters)
+            ), HTTPStatus.OK
