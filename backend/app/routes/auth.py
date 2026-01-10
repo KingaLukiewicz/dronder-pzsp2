@@ -12,7 +12,7 @@ from app.config import DEBUG
 from app.db import get_db_session
 from app.forms.auth import LoginForm, RegisterForm
 from app.models import Users as User
-from app.routes.user import find_user_group
+from app.routes.user import find_admin_group, find_operator_group, find_user_group
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -33,6 +33,17 @@ def register_user():
         )
 
     try:
+        match form.role:  # type: ignore
+            case "client":
+                user.group = find_user_group(session)
+                user.group_id = user.group.group_id  # type: ignore
+            case "admin":
+                user.group = find_admin_group(session)
+                user.group_id = user.group.group_id  # type: ignore
+            case "operator":
+                user.group = find_operator_group(session)
+                user.group_id = user.group.group_id  # type: ignore
+
         user.group = find_user_group(session)
         user.group_id = user.group.group_id  # type: ignore
 
