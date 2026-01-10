@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 from sqlmodel import select
-from apscheduler.schedulers.background import BackgroundScheduler  # pyright: ignore[reportMissingTypeStubs]
+from apscheduler.schedulers.background import BackgroundScheduler  # type: ignore
 from app.matching import update_all_matches
 from app.notifications import socketio
 from app.routes import matches, offer, review
@@ -19,11 +19,11 @@ app.config["JWT_SECRET"] = JWT_SECRET
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.config["JWT_ALGORITHM"] = JWT_ALGORITHM
 
-app.register_blueprint(auth.bp)
-app.register_blueprint(user.bp)
-app.register_blueprint(offer.bp)
-app.register_blueprint(review.bp)
-app.register_blueprint(matches.bp)
+app.register_blueprint(auth.bp)  # type: ignore
+app.register_blueprint(user.bp)  # type: ignore
+app.register_blueprint(offer.bp)  # type: ignore
+app.register_blueprint(review.bp)  # type: ignore
+app.register_blueprint(matches.bp)  # type: ignore
 
 _ = CORS(app)  # type: ignore
 _ = JWTManager(app)  # type: ignore
