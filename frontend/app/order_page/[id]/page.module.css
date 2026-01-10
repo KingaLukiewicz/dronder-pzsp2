@@ -1,0 +1,45 @@
+.OrderPage {
+  margin-top: 15vh;
+  color: black;
+  width: 100%;
+}
+
+.OrderPage h1 {
+  font-size: clamp(1rem, 2.5vw, 3rem);
+  font-weight: bold;
+  margin-bottom: 3vh;
+}
+
+.OrderPage h2 {
+  font-size: clamp(1rem, 1.5vw, 3rem);
+  font-weight: bold;
+  margin-top: 2vh;
+}
+
+.MainContent {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  width: 90%;
+  margin-bottom: 3vh;
+}
+
+.Section {
+  margin-bottom: 1.5rem;
+}
+
+.Section p,
+.Section li {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.Section ul {
+  padding-left: 1.5rem;
+}
+
+.Section ul li {
+  margin-bottom: 0.4rem;
+}

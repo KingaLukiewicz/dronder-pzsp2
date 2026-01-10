@@ -1,0 +1,87 @@
+.AdminPage {
+  width: 100%;
+  min-height: 100vh;
+  margin-top: 15vh;
+  background-color: #f4f7f9;
+  padding-bottom: 4rem;
+}
+
+.AdminContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.StatGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.StatCard {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.StatContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.StatContent p {
+  color: #666;
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.StatContent h2 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #184e77;
+}
+
+.StatIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #184e77, #52b6ae);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ChartCard {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.ChartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.ChartHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #184e77;
+}
+
+.ChartHeader .MuiFormControl-root {
+  margin-top: 0.5rem;
+}

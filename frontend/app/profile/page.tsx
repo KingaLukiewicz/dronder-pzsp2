@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import Header from "../header/page";
-import Sidebar from "../sidebar/page";
+import Header from "../components/header/page";
+import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
-import ReviewBox from "../review_box/page";
+import ReviewBox from "../components/review_box/page";
 import { Tooltip, Rating } from "@mui/material";
 import { UserdataGet } from "../types";
 
@@ -28,7 +28,6 @@ export default function Profile() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-
         const res = await fetch("http://127.0.0.1:5000/user/data", {
           method: "GET",
           headers: {
@@ -42,6 +41,7 @@ export default function Profile() {
           throw new Error(`Błąd backendu: ${res.status}`);
         }
         const data: UserdataGet = await res.json();
+        sessionStorage.setItem("role", data.role);
         setUserData(data);
       } catch (error) {
         console.error("Failed to fetch", error);
