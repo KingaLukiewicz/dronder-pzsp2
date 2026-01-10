@@ -23,29 +23,38 @@ export default function Profile() {
   };
 
   const sortedReviews = useMemo(() => {
-  if (!userData?.reviews) return [];
+    if (!userData?.reviews) return [];
 
-  const reviews = [...userData.reviews];
+    const reviews = [...userData.reviews];
 
-  switch (sortBy) {
-    case "new":
-      return reviews.sort(
-        (a, b) =>
-          new Date(b.date).getTime() -
-          new Date(a.date).getTime() // nie działa jeszcze bo nie ma daty w review xD
-      );
+    switch (sortBy) {
+      case "new":
+        return reviews.sort((a, b) => {
+          const dateA = a.review_date
+            ? new Date(a.review_date).getTime()
+            : 0;
 
-    case "best":
-      return reviews.sort((a, b) => b.rating - a.rating);
+          const dateB = b.review_date
+            ? new Date(b.review_date).getTime()
+            : 0;
 
-    case "worst":
-      return reviews.sort((a, b) => a.rating - b.rating);
+          return dateB - dateA; // newest first
+        });
 
-    default:
-      return reviews;
-  }
-}, [userData?.reviews, sortBy]);
+      case "best":
+        return reviews.sort(
+          (a, b) => (b.rating ?? 0) - (a.rating ?? 0)
+        );
 
+      case "worst":
+        return reviews.sort(
+          (a, b) => (a.rating ?? 0) - (b.rating ?? 0)
+        );
+
+      default:
+        return reviews;
+    }
+  }, [userData?.reviews, sortBy]);
 
   useEffect(() => {
     const fetchUserData = async () => {
