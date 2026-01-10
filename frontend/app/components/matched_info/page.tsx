@@ -3,13 +3,13 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./page.module.css";
 import React, { PropsWithChildren, createContext, useContext } from "react";
+import { Review } from "@/app/types";
 
 type MatchedInfoContext = {
   user_id: number;
   title: string;
   description: string;
-  rating?: number;
-  vote_count?: number;
+  reviews?: Review[];
 };
 
 const MatchedInfoContext = createContext<MatchedInfoContext | undefined>(
@@ -28,8 +28,7 @@ type Props = PropsWithChildren & {
   user_id: number;
   title: string;
   description: string;
-  rating?: number;
-  vote_count?: number;
+  reviews?: Review[];
   onClick?: () => void;
 };
 
@@ -42,13 +41,12 @@ const MatchedInfo: MatchedInfoComponent = ({
   user_id,
   title,
   description,
-  rating,
-  vote_count,
+  reviews,
   onClick,
 }) => {
   return (
     <MatchedInfoContext.Provider
-      value={{ user_id, title, description, rating, vote_count }}
+      value={{ user_id, title, description, reviews }}
     >
       <div className={styles.MatchedInfo}>
         <div className={styles.TitleRow}>
@@ -70,7 +68,12 @@ const MatchedInfo: MatchedInfoComponent = ({
 };
 
 MatchedInfo.Rating = function MatchedInfoName() {
-  const { rating, vote_count } = useMatchedInfoContext();
+  const { reviews } = useMatchedInfoContext();
+  const vote_count = reviews?.length ?? 0;
+  const rating =
+    vote_count > 0
+      ? reviews!.reduce((sum, r) => sum + r.rating, 0) / vote_count
+      : 0;
   return (
     <div className={styles.Rating}>
       {rating && vote_count && (
