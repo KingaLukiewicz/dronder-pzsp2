@@ -27,8 +27,9 @@ def connect_user(auth: dict[str, Any]):
 
 @socketio.on("disconnect")
 def disconnect_user():
-    room: str = list(filter(lambda name: name != request.sid, rooms()))[0]  # type: ignore
-    user_id = int(room) # type: ignore
+    room = list(filter(lambda name: name != request.sid, rooms()))[0]  # type: ignore
+    room = cast(str, room)  # type: ignore
+    user_id = int(room)
     leave_room(room)
     connected_users.subtract([user_id])
     if connected_users.get(user_id, 0) <= 0:

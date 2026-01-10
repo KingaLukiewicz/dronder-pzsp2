@@ -10,7 +10,7 @@ from app.matching import MatchingStatus
 from app.models import Matches, Offers, Users
 from app.routes.offer import parse_offer  # pyright: ignore[reportUnknownVariableType]
 
-bp = Blueprint("matches", __name__, url_prefix="/matches")
+bp: Blueprint = Blueprint("matches", __name__, url_prefix="/matches")
 
 
 @bp.get("/offer")

@@ -11,7 +11,7 @@ from app.matching import MatchingStatus
 from app.models import Matches, Offers
 
 
-bp = Blueprint("review", __name__, url_prefix="/review")
+bp: Blueprint = Blueprint("review", __name__, url_prefix="/review")
 
 
 @bp.post("/")

@@ -3,14 +3,14 @@ import logging
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required  # type: ignore
 from sqlmodel import select, func
-from pydantic import ValidationError
-from sqlmodel import select
+from typing import List, Tuple, Dict
+from datetime import date
 
 from app.db import get_db_session
 from app.models import Users as User, Groups as Group, Offers as Offer
 
 
-bp = Blueprint("admin", __name__, url_prefix="/admin")
+bp: Blueprint = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 @bp.get("/data")
@@ -42,13 +42,13 @@ def get_admindata():
 
         offer_count = session.exec(select(func.count()).select_from(Offer)).one()
 
-        operator_ratings = session.exec(
+        operator_ratings: List[Tuple[int, int]] = session.exec(
             select(
                 Offer.operator_rating,
-                func.count(Offer.operator_rating).label("count")
+                func.count(Offer.operator_rating).label("count")  # type: ignore
             )
-            .where(Offer.operator_rating.is_not(None))
-            .group_by(Offer.operator_rating)
+            .where(Offer.operator_rating is not None)
+            .group_by(Offer.operator_rating)  # type: ignore[arg-type]
         ).all()
 
         operator_rating_stats = {
@@ -58,24 +58,24 @@ def get_admindata():
         client_ratings = session.exec(
             select(
                 Offer.client_rating,
-                func.count(Offer.client_rating).label("count")
+                func.count(Offer.client_rating).label("count")  # type: ignore
             )
-            .where(Offer.client_rating.is_not(None))
-            .group_by(Offer.client_rating)
+            .where(Offer.client_rating is not None)
+            .group_by(Offer.client_rating)  # type: ignore[arg-type]
         ).all()
 
-        client_rating_stats = {
+        client_rating_stats: Dict[int, int] = {
             rating: count for rating, count in client_ratings
         }
 
-        offer_by_deadline = session.exec(
-            select(
+        offer_by_deadline: List[tuple[date, int]] = session.exec(
+            select(  # type: ignore
                 Offer.deadline_date,
-                func.count()
+                func.count().label("count")  # type: ignore[arg-type]
             ).group_by(Offer.deadline_date)
         ).all()
 
-        offer_by_deadline_json = {
+        offer_by_deadline_json: Dict[str, int] = {
            deadline.isoformat(): count for deadline, count in offer_by_deadline
         }
 

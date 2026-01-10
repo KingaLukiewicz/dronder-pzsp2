@@ -14,7 +14,7 @@ from app.forms.auth import LoginForm, RegisterForm
 from app.models import Users as User
 from app.routes.user import find_admin_group, find_operator_group, find_user_group
 
-bp = Blueprint("auth", __name__, url_prefix="/auth")
+bp: Blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @bp.route("/register", methods=["POST"])
