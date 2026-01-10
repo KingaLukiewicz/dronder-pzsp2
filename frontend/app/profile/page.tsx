@@ -112,7 +112,14 @@ export default function Profile() {
                           </span>
                         </Tooltip>
                       </div>
-                      <p>{`${totalReviews} oceny`}</p>
+                      <p>
+                        {totalReviews}{" "}
+                        {totalReviews === 1
+                          ? "ocena"
+                          : totalReviews % 10 >= 2 && totalReviews % 10 <= 4 && !(totalReviews % 100 >= 12 && totalReviews % 100 <= 14)
+                            ? "oceny"
+                            : "ocen"}
+                      </p>
                     </div>
                   </>
                 )}
@@ -127,7 +134,6 @@ export default function Profile() {
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
-          <option value="">-- Sortuj według --</option>
           <option value="new">Od najnowszych</option>
           <option value="best">Od najlepszych</option>
           <option value="worst">Od najgorszych</option>
