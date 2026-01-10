@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import ReviewBox from "../review_box/page";
 import { Tooltip, Rating } from "@mui/material";
 import { UserdataGet } from "../types";
+import { useMemo } from "react";
 
 export default function Profile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -20,6 +21,31 @@ export default function Profile() {
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
+
+  const sortedReviews = useMemo(() => {
+  if (!userData?.reviews) return [];
+
+  const reviews = [...userData.reviews];
+
+  switch (sortBy) {
+    case "new":
+      return reviews.sort(
+        (a, b) =>
+          new Date(b.date).getTime() -
+          new Date(a.date).getTime() // nie działa jeszcze bo nie ma daty w review xD
+      );
+
+    case "best":
+      return reviews.sort((a, b) => b.rating - a.rating);
+
+    case "worst":
+      return reviews.sort((a, b) => a.rating - b.rating);
+
+    default:
+      return reviews;
+  }
+}, [userData?.reviews, sortBy]);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -98,7 +124,9 @@ export default function Profile() {
           <option value="worst">Od najgorszych</option>
         </select>
         <div className={styles.Reviews}>
-          <ReviewBox />
+          {sortedReviews.map((review, index) => (
+            <ReviewBox key={index} review={review} />
+          ))}
         </div>
       </main>
     </div>
