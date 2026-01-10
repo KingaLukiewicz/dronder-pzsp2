@@ -1,11 +1,10 @@
 from enum import Enum
-import logging
 from typing import Final
 
 import sqlmodel
 from app.db import get_db_session
 from app.models import Matches, Offers, OperatorProducts, Users
-import geopy.distance  # pyright: ignore[reportMissingTypeStubs]
+import geopy.distance  # type: ignore
 from sqlmodel import select, func
 
 from app.notifications import push_notifications
