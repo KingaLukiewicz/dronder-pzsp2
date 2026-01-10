@@ -29,4 +29,4 @@ def test_admindata_endpoint(client: FlaskClient):
     assert response.json["client_rating_stats"]["5"] == 4
     assert response.json["number_of_offers"] == 9
     assert isinstance(response.json["number_of_offers_by_deadline"], dict)
-    print(response.json["number_of_offers_by_deadline"])
+    assert response.json["number_of_offers_by_deadline"]["2024-08-20"] == 1
