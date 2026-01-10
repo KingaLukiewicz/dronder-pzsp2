@@ -1,13 +1,8 @@
 "use client";
 
 import { Rating, Tooltip } from "@mui/material";
+import { Review } from "../types";
 import styles from "./page.module.css";
-
-type Review = {
-  rating: number | null;
-  review: string | null;
-  reviewer: string | null;
-};
 
 type ReviewBoxProps = {
   review: Review;

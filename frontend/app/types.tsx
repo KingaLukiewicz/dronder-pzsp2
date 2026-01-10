@@ -46,6 +46,7 @@ export type ReviewPost = {
 
 export type Review = {
   offer_id: number;
+  review_date?: string;
   rating: number;
   review?: string;
   reviewer: string;
@@ -56,7 +57,7 @@ export type UserdataGet = {
   description: string;
   role: string;
   location: Loc;
-  reviews: Array<Review>;
+  reviews:  Review[];
 };
 
 export type UserdataPost = {
