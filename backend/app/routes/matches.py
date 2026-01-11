@@ -128,3 +128,26 @@ def accept_operator(offer_id: int, operator_id: int):
 
         session.commit()
         return "", HTTPStatus.OK
+
+
+@bp.post("/decline/operator/<int:offer_id>/<int:operator_id>")
+@jwt_required()
+def decline_operator(offer_id: int, operator_id: int):
+    user_id: int = int(get_jwt_identity())
+    with get_db_session() as session:
+        match = session.exec(
+            select(Matches)
+            .select_from(Offers)
+            .join(Matches)
+            .join(Users)
+            .where(Offers.client_id == user_id)
+            .where(Offers.offer_id == offer_id)
+            .where(Users.user_id == operator_id)
+        ).one_or_none()
+
+        if match is None:
+            return "", HTTPStatus.NOT_FOUND
+
+        session.delete(match)
+        session.commit()
+        return "", HTTPStatus.OK
