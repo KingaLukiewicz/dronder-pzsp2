@@ -55,6 +55,7 @@ export default function Profile() {
         }
         const data: UserdataGet = await res.json();
         sessionStorage.setItem("role", data.role);
+        sessionStorage.setItem("email", data.email);
         setUserData(data);
       } catch (error) {
         console.error("Failed to fetch", error);
