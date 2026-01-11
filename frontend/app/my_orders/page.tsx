@@ -106,6 +106,7 @@ export default function MyOrders() {
                   {ongoing.map((offer, index) => (
                     <OrderPill
                       key={offer.offer_id ?? index}
+                      id={offer.offer_id}
                       title={offer.offer_type}
                       deadline={
                         offer.deadline_date
@@ -140,6 +141,7 @@ export default function MyOrders() {
                   {finalized.map((offer, index) => (
                     <OrderPill
                       key={offer.offer_id ?? index}
+                      id={offer.offer_id}
                       title={offer.offer_type}
                       deadline={
                         offer.deadline_date
