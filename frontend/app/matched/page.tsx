@@ -67,9 +67,12 @@ export default function Matched() {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data: UserdataGet[] = await res.json();
-
-        setOperators(Array.isArray(data) ? data : []);
+        const data: Record<number, UserdataGet[]> = await res.json();
+        const operatorsWithOffer = Object.entries(data).flatMap(
+          ([offer_id, users]) =>
+            users.map((user) => ({ ...user, offer_id: Number(offer_id) }))
+        );
+        setOperators(operatorsWithOffer);
       } catch (error) {
         console.error("Failed to fetch", error);
       }
@@ -77,6 +80,70 @@ export default function Matched() {
 
     fetchOperators();
   }, []);
+
+  const handleAcceptOffer = async (offer_id: number) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const res = await fetch(`${BASE_URL}/matches/accept/offer/${offer_id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Błąd podczas zapisu: ${text}`);
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        alert(err.message);
+      } else {
+        alert("Coś poszło nie tak.");
+      }
+    }
+  };
+
+  const handleAcceptOperator = async (
+    offer_id: number,
+    operator_id: number
+  ) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const res = await fetch(
+        `${BASE_URL}/matches/accept/operator/${offer_id}/${operator_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Błąd podczas zapisu: ${text}`);
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        alert(err.message);
+      } else {
+        alert("Coś poszło nie tak.");
+      }
+    }
+  };
 
   return (
     <div className={styles.Matched}>
@@ -96,6 +163,7 @@ export default function Matched() {
                   title={`${offer.client_name} : ${offer.offer_type}`}
                   description={offer.description}
                   onClick={() => handleOfferDetails(offer.offer_id)}
+                  handleAccept={() => handleAcceptOffer(offer.offer_id)}
                 />
               ))}
             {operators.map((operator) => (
@@ -105,6 +173,10 @@ export default function Matched() {
                 title={operator.username}
                 description={operator.description}
                 reviews={operator.reviews}
+                handleAccept={() =>
+                  operator.offer_id &&
+                  handleAcceptOperator(operator.offer_id, operator.user_id)
+                }
               >
                 <MatchedInfo.Rating />
               </MatchedInfo>

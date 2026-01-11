@@ -31,6 +31,8 @@ type Props = PropsWithChildren & {
   description: string;
   reviews?: Review[];
   onClick?: () => void;
+  handleAccept: () => void;
+  handleReject?: () => void;
 };
 
 type MatchedInfoComponent = React.FC<Props> & {
@@ -44,6 +46,8 @@ const MatchedInfo: MatchedInfoComponent = ({
   description,
   reviews,
   onClick,
+  handleAccept,
+  handleReject,
 }) => {
   const router = useRouter();
 
@@ -67,11 +71,18 @@ const MatchedInfo: MatchedInfoComponent = ({
             {title}
           </h2>
           <div className={styles.Actions}>
-            <IconButton size="small" color="success">
+            <IconButton
+              size="small"
+              color="success"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAccept();
+              }}
+            >
               <CheckIcon />
             </IconButton>
             <IconButton size="small" color="error">
-              <CloseIcon />
+              <CloseIcon onClick={handleReject} />
             </IconButton>
           </div>
         </div>
