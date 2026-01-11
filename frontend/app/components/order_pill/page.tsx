@@ -38,17 +38,19 @@ const OrderPill: OrderPillComponent = ({ children, id, title, deadline }) => {
   };
 
   return (
-    <div className={styles.OrderPill}>
-      <div className={styles.Left}>
-        {children}
-        <p>{title}</p>
-        <p>deadline: {deadline}</p>
+    <OrderPillContext.Provider value={{ id, title, deadline }}>
+      <div className={styles.OrderPill}>
+        <div className={styles.Left}>
+          {children}
+          <p>{title}</p>
+          <p>deadline: {deadline}</p>
+        </div>
+        <div className={styles.Right} onClick={handleReroute}>
+          <p>Zobacz szczegóły</p>
+          <ArrowForwardIosIcon className={styles.Arrow} />
+        </div>
       </div>
-      <div className={styles.Right} onClick={handleReroute}>
-        <p>Zobacz szczegóły</p>
-        <ArrowForwardIosIcon className={styles.Arrow} />
-      </div>
-    </div>
+    </OrderPillContext.Provider>
   );
 };
 
@@ -95,11 +97,10 @@ OrderPill.Status = function OrderPillStatus() {
   return (
     <div style={{ marginTop: "10px" }}>
       <Button
-        variant="contained"
-        color="success"
+        variant="outlined"
         onClick={handleFinalize}
+        className={styles.OrderPillButton}
         disabled={loading}
-        sx={{ textTransform: "none" }}
       >
         {loading ? "Trwa finalizacja..." : "Zakończ zlecenie"}
       </Button>
