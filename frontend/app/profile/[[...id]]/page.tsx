@@ -65,7 +65,7 @@ export default function Profile() {
       }
     };
     fetchUserData();
-  }, []);
+  }, [userId, router]);
 
   return (
     <div className={styles.Profile}>

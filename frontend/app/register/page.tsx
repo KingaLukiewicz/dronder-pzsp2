@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
@@ -74,7 +74,11 @@ export default function Register() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsOperator(event.target.checked);
-    isOperator ? setRole("operator") : setRole("user");
+    if (isOperator) {
+      setRole("operator");
+    } else {
+      setRole("user");
+    }
   };
 
   return (
