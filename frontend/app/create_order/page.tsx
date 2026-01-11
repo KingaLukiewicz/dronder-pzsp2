@@ -1,19 +1,14 @@
 "use client";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { OfferPost } from "../types";
-import { OFFER_TYPE, BASE_URL } from "../constants";
+import { BASE_URL } from "../constants";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CreateOrderForm() {
   const [description, setDescription] = useState("");
   const [service, setService] = useState("");
-  const [gsd, setGSD] = useState("");
-  const [accuracy, setAccuracy] = useState("");
-  const [file, setFile] = useState("");
   const [locationMode, setLocationMode] = useState<"address" | "coords">(
     "address"
   );
@@ -27,10 +22,7 @@ export default function CreateOrderForm() {
   const [parameters, setParameters] = useState<
     { name: string; value: string }[]
   >([]);
-  const [state, setState] = useState({
-    rtk: false,
-    photopoints: false,
-  });
+  const router = useRouter();
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -83,13 +75,6 @@ export default function CreateOrderForm() {
     fetchParameters();
   }, [service]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
     return d.toUTCString();
@@ -129,13 +114,7 @@ export default function CreateOrderForm() {
         offer_type: service,
         deadline_date: formatDate(deadline),
         location: locationPayload,
-        format: file,
-        parameters: [
-          { name: "GSD", value: gsd },
-          { name: "accuracy", value: accuracy },
-          { name: "RTK", value: rtk ? "true" : "false" },
-          { name: "photopoints", value: photopoints ? "true" : "false" },
-        ],
+        parameters: parameters,
       };
 
       if (flightDate) {
@@ -157,13 +136,13 @@ export default function CreateOrderForm() {
       }
 
       alert("Zlecenie zostało utworzone!");
+      router.push("/my_orders");
     } catch (err: unknown) {
       console.error(err);
       if (err instanceof Error) alert(err.message);
     }
   };
 
-  const { rtk, photopoints } = state;
   return (
     <div className={styles.Form}>
       <h1>Utwórz zlecenie</h1>

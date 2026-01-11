@@ -33,7 +33,6 @@ export type OfferPost = {
   flight_date?: string;
   deadline_date: string;
   location: Loc;
-  format: string;
   parameters?: Array<Parameter>;
   status?: string;
 };
