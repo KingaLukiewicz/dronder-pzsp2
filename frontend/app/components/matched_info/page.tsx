@@ -55,7 +55,7 @@ const MatchedInfo: MatchedInfoComponent = ({
     <MatchedInfoContext.Provider
       value={{ user_id, title, description, reviews }}
     >
-      <div className={styles.MatchedInfo}>
+      <div className={styles.MatchedInfo} onClick={onClick}>
         <div className={styles.TitleRow}>
           <h2 onClick={handleGoUserPage} style={{ cursor: "pointer" }}>
             {title}

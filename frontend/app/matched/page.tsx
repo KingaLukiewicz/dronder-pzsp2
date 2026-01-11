@@ -6,12 +6,14 @@ import styles from "./page.module.css";
 import MatchedInfo from "../components/matched_info/page";
 import { OfferForm, UserdataGet } from "../types";
 import { BASE_URL } from "../constants";
+import { useRouter } from "next/navigation";
 
 export default function Matched() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [offers, setOffers] = useState<OfferForm[]>([]);
   const [operators, setOperators] = useState<UserdataGet[]>([]);
   const [role, setRole] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const storedRole = sessionStorage.getItem("role");
@@ -20,6 +22,10 @@ export default function Matched() {
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+  };
+
+  const handleOfferDetails = (id: number) => {
+    router.push(`/order_page/${id}`);
   };
 
   useEffect(() => {
@@ -89,6 +95,7 @@ export default function Matched() {
                   user_id={offer.client_id}
                   title={`${offer.client_name} : ${offer.offer_type}`}
                   description={offer.description}
+                  onClick={() => handleOfferDetails(offer.offer_id)}
                 />
               ))}
             {operators.map((operator) => (
