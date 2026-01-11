@@ -38,7 +38,10 @@ export default function Profile() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch(`${BASE_URL}/user/data`, {
+        const url = userId
+          ? `${BASE_URL}/user/data/${userId}`
+          : `${BASE_URL}/user/data`;
+        const res = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -65,7 +68,11 @@ export default function Profile() {
       <Header toggleSidebar={toggleSidebar} />
       {sidebarVisible && <Sidebar />}
       <main style={{ marginLeft: sidebarVisible ? "27vw" : "7vw" }}>
-        <h1>Mój profil</h1>
+        {userId ? (
+          <h1>{`Profil ${userData?.username}`}</h1>
+        ) : (
+          <h1>Mój profil</h1>
+        )}
         {userData && (
           <>
             <div className={styles.InfoContainer}>
