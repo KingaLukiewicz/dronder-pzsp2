@@ -55,6 +55,9 @@ export default function Profile() {
         }
         const data: UserdataGet = await res.json();
         sessionStorage.setItem("role", data.role);
+        if (data.role === "admin") {
+          router.push("/admin");
+        }
         sessionStorage.setItem("email", data.email);
         setUserData(data);
       } catch (error) {

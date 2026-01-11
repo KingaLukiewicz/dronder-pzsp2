@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/header/page";
 import styles from "./page.module.css";
-import { Card } from "@mui/material";
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { People, Business } from "@mui/icons-material";
+import { Card, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import {
   BarChart,
   Bar,
@@ -15,42 +13,122 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { BASE_URL } from "../constants";
+
+type TimeRange = "day" | "month" | "year";
+
+type AdminData = {
+  number_of_admins: number;
+  number_of_clients: number;
+  number_of_operators: number;
+  operator_rating_stats: Record<number, number>;
+  client_rating_stats: Record<number, number>;
+  number_of_offers: number;
+  number_of_offers_by_deadline: Record<string, number>;
+};
 
 export default function Admin() {
-  type TimeRange = "week" | "month" | "year";
-  const [timeRange, setTimeRange] = useState<TimeRange>("month");
+  const [timeRange, setTimeRange] = useState<TimeRange>("day");
+  const [data, setData] = useState<AdminData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const chartData: Record<TimeRange, { name: string; zlecenia: number }[]> = {
-    week: [
-      { name: "Pon", zlecenia: 12 },
-      { name: "Wt", zlecenia: 19 },
-      { name: "Śr", zlecenia: 15 },
-      { name: "Czw", zlecenia: 22 },
-      { name: "Pt", zlecenia: 18 },
-      { name: "Sob", zlecenia: 8 },
-      { name: "Ndz", zlecenia: 5 },
-    ],
-    month: [
-      { name: "Tydz. 1", zlecenia: 65 },
-      { name: "Tydz. 2", zlecenia: 78 },
-      { name: "Tydz. 3", zlecenia: 55 },
-      { name: "Tydz. 4", zlecenia: 92 },
-    ],
-    year: [
-      { name: "Sty", zlecenia: 245 },
-      { name: "Lut", zlecenia: 289 },
-      { name: "Mar", zlecenia: 312 },
-      { name: "Kwi", zlecenia: 278 },
-      { name: "Maj", zlecenia: 334 },
-      { name: "Cze", zlecenia: 298 },
-      { name: "Lip", zlecenia: 356 },
-      { name: "Sie", zlecenia: 321 },
-      { name: "Wrz", zlecenia: 298 },
-      { name: "Paź", zlecenia: 287 },
-      { name: "Lis", zlecenia: 312 },
-      { name: "Gru", zlecenia: 345 },
-    ],
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+        const res = await fetch(`${BASE_URL}/admin/data`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error(`Błąd pobierania danych: ${res.status}`);
+        const json: AdminData = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Ładowanie danych...</p>;
+  if (!data) return <p>Brak danych do wyświetlenia</p>;
+
+  const offers = data.number_of_offers_by_deadline;
+
+  // --- Generowanie danych dla zakresu ---
+  const generateChartData = (): { name: string; zlecenia: number }[] => {
+    const today = new Date();
+
+    if (timeRange === "day") {
+      // Poprzedni miesiąc
+      const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const daysInMonth = new Date(
+        prevMonth.getFullYear(),
+        prevMonth.getMonth() + 1,
+        0
+      ).getDate();
+      return Array.from({ length: daysInMonth }, (_, i) => {
+        const date = new Date(
+          prevMonth.getFullYear(),
+          prevMonth.getMonth(),
+          i + 1
+        );
+        const dateStr = date.toISOString().split("T")[0];
+        return { name: String(i + 1), zlecenia: offers[dateStr] || 0 };
+      });
+    }
+
+    if (timeRange === "month") {
+      // Poprzedni rok
+      const year = today.getFullYear() - 1;
+      return Array.from({ length: 12 }, (_, i) => {
+        const monthNames = [
+          "Sty",
+          "Lut",
+          "Mar",
+          "Kwi",
+          "Maj",
+          "Cze",
+          "Lip",
+          "Sie",
+          "Wrz",
+          "Paź",
+          "Lis",
+          "Gru",
+        ];
+        const daysInMonth = new Date(year, i + 1, 0).getDate();
+        let sum = 0;
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateStr = new Date(year, i, d).toISOString().split("T")[0];
+          sum += offers[dateStr] || 0;
+        }
+        return { name: monthNames[i], zlecenia: sum };
+      });
+    }
+
+    if (timeRange === "year") {
+      // Ostatnie 5 lat
+      const currentYear = today.getFullYear();
+      return Array.from({ length: 5 }, (_, i) => {
+        const year = currentYear - i - 1; // poprzednie lata
+        let sum = 0;
+        for (const dateStr in offers) {
+          if (dateStr.startsWith(String(year))) sum += offers[dateStr] || 0;
+        }
+        return { name: String(year), zlecenia: sum };
+      }).reverse();
+    }
+
+    return [];
   };
+
+  const chartData = generateChartData();
 
   return (
     <div className={styles.AdminPage}>
@@ -59,27 +137,20 @@ export default function Admin() {
       <main className={styles.AdminContainer}>
         <div className={styles.StatGrid}>
           <Card className={styles.StatCard}>
-            <div className={styles.StatContent}>
-              <div>
-                <p>Liczba operatorów</p>
-                <h2>127</h2>
-              </div>
-              <div className={styles.StatIcon}>
-                <People sx={{ color: "white", fontSize: 32 }} />
-              </div>
-            </div>
+            <p>Liczba operatorów</p>
+            <h2>{data.number_of_operators}</h2>
           </Card>
-
           <Card className={styles.StatCard}>
-            <div className={styles.StatContent}>
-              <div>
-                <p>Liczba zleceniodawców</p>
-                <h2>89</h2>
-              </div>
-              <div className={styles.StatIcon}>
-                <Business sx={{ color: "white", fontSize: 32 }} />
-              </div>
-            </div>
+            <p>Liczba zleceniodawców</p>
+            <h2>{data.number_of_clients}</h2>
+          </Card>
+          <Card className={styles.StatCard}>
+            <p>Liczba adminów</p>
+            <h2>{data.number_of_admins}</h2>
+          </Card>
+          <Card className={styles.StatCard}>
+            <p>Liczba wszystkich zleceń</p>
+            <h2>{data.number_of_offers}</h2>
           </Card>
         </div>
 
@@ -93,16 +164,15 @@ export default function Admin() {
                 label="Zakres"
                 onChange={(e) => setTimeRange(e.target.value as TimeRange)}
               >
-                <MenuItem value="week">Tydzień</MenuItem>
-                <MenuItem value="month">Miesiąc</MenuItem>
-                <MenuItem value="year">Rok</MenuItem>
+                <MenuItem value="day">Dzień (poprzedni miesiąc)</MenuItem>
+                <MenuItem value="month">Miesiąc (poprzedni rok)</MenuItem>
+                <MenuItem value="year">Rok (ostatnie lata)</MenuItem>
               </Select>
             </FormControl>
           </div>
-
           <div style={{ width: "100%", height: 400 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData[timeRange]}>
+              <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
