@@ -19,11 +19,11 @@ def create_test_user(client: FlaskClient) -> tuple[int, str, LoginForm]:
     mail = f"abcd.abcd@abcd{random.randint(1, 10000000000)}.pl"
     name = "Abecadłowki" + str(random.randint(10, 1000))
     data = RegisterForm.model_validate({
-        "username":name,
-        "email":mail,
-        "password":"foobaring",
-        "re_password":"foobaring",
-        "phone_number":"+48 123 456 789",
+        "username": name,
+        "email": mail,
+        "password": "foobaring",
+        "re_password": "foobaring",
+        "phone_number": "+48 123 456 789",
     })
     ret = LoginForm(email=mail, password="foobaring")
     response = client.post("/auth/register", json=data.model_dump())

@@ -82,6 +82,7 @@ INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VA
 
 
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
+('marek_lewandowski@gmail.com', 'marek_admin', 'admin1234', 123456789, NULL, 1),
 ('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 2),
 ('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 3);
 INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES

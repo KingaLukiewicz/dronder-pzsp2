@@ -127,3 +127,56 @@ Creates new offer with logged user as client.
 | `parameters`    | array\[object\]      | No       |                                      |
 
 
+### GET /admin/data/
+
+Requires authentication with JWT token and checks if user is admin.
+
+#### Request Body
+##### Content-Type: application/json
+| Field                          | Type    | Description                                     |
+| ------------------------------ | ------- | ----------------------------------------------- |
+| `number_of_admins`             | integer | Total number of admin users                     |
+| `number_of_clients`            | integer | Total number of client users                    |
+| `number_of_operators`          | integer | Total number of operator users                  |
+| `number_of_offers`             | integer | Total number of offers in the system            |
+| `client_rating_stats`          | object  | Distribution of client ratings                  |
+| `operator_rating_stats`        | object  | Distribution of operator ratings                |
+| `number_of_offers_by_deadline` | object  | Distribution of offers grouped by deadline date |
+
+
+## Example
+```
+{
+    "client_rating_stats": {
+        "2": 1,
+        "4": 2,
+        "5": 4
+    },
+    "number_of_admins": 1,
+    "number_of_clients": 9,
+    "number_of_offers": 11,
+    "number_of_offers_by_deadline": {
+        "2024-08-20": 1,
+        "2024-09-15": 1,
+        "2024-10-05": 1,
+        "2024-11-10": 1,
+        "2024-12-01": 1,
+        "2025-01-15": 1,
+        "2025-01-30": 1,
+        "2025-02-05": 1,
+        "2025-02-10": 1,
+        "2025-10-10": 2
+    },
+    "number_of_operators": 5,
+    "operator_rating_stats": {
+        "1": 1,
+        "4": 2,
+        "5": 4
+    }
+}
+```
+
+#### Response
+ - OK - with data about system
+ - NOT_FOUND - user not found
+ - FORBIDDEN - user is not admin

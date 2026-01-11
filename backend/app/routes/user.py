@@ -22,7 +22,7 @@ from app.models import (
 )
 
 
-bp = Blueprint("user", __name__, url_prefix="/user")
+bp: Blueprint = Blueprint("user", __name__, url_prefix="/user")
 
 
 def find_user_group(session: Session):

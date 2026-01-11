@@ -11,7 +11,6 @@ def test_userdata_endpoints_for_client(client: FlaskClient):
     user_id, _, login = create_test_user(client)
     access_token = get_access_token(client, login)
 
-
     userdata = UserdataForm.model_validate(
         {
             "username": "FooBarXXX",
@@ -19,7 +18,7 @@ def test_userdata_endpoints_for_client(client: FlaskClient):
             "role": "client",
             "reviews": [],
             "email": login.email,
-            "phone_number":"+48 777 888 999"
+            "phone_number": "+48 777 888 999"
         }
     )
 
@@ -57,6 +56,6 @@ def test_userdata_endpoints_for_operator(client: FlaskClient):
     userdata.email = login.email
     userdata.phone_number = phonenumbers.format_number(phonenumbers.PhoneNumber(48, 123456789), phonenumbers.PhoneNumberFormat.RFC3966)
 
-    res = client.get(f"/user/data/{user_id}", headers=from_token(access_token))
+    res = client.get("/user/data", headers=from_token(access_token))
     assert res.status_code == HTTPStatus.OK
     assert UserdataForm.model_validate(res.json) == userdata

@@ -20,7 +20,7 @@ from app.models import (
 from app.db import get_db_session
 
 
-bp = Blueprint("offer", __name__, url_prefix="/offer")
+bp: Blueprint = Blueprint("offer", __name__, url_prefix="/offer")
 
 
 def insert_parameters(session: Session, parameters: list[ParameterForm]):
