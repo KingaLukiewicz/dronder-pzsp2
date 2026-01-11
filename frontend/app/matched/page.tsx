@@ -69,8 +69,13 @@ export default function Matched() {
         });
         const data: Record<number, UserdataGet[]> = await res.json();
         const operatorsWithOffer = Object.entries(data).flatMap(
-          ([offer_id, users]) =>
-            users.map((user) => ({ ...user, offer_id: Number(offer_id) }))
+          ([offer_id, users]) => {
+            const usersArray = Array.isArray(users) ? users : [users];
+            return usersArray.map((user) => ({
+              ...user,
+              offer_id: Number(offer_id),
+            }));
+          }
         );
         setOperators(operatorsWithOffer);
       } catch (error) {
