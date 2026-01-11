@@ -173,6 +173,9 @@ export default function Matched() {
                 title={operator.username}
                 description={operator.description}
                 reviews={operator.reviews}
+                onClick={() =>
+                  operator.offer_id && handleOfferDetails(operator.offer_id)
+                }
                 handleAccept={() =>
                   operator.offer_id &&
                   handleAcceptOperator(operator.offer_id, operator.user_id)
