@@ -81,6 +81,7 @@ export type UserdataGet = {
   reviews: Review[];
   products: string[];
   user_id: number;
+  offer_id?: number;
 };
 
 export type UserdataPost = {
