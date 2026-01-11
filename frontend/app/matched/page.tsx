@@ -154,6 +154,37 @@ export default function Matched() {
     }
   };
 
+  const handleRejectOffer = async (offer_id: number) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const res = await fetch(`${BASE_URL}/matches/decline/offer/${offer_id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Błąd podczas zapisu: ${text}`);
+      }
+      alert("Odrzuciłeś zlecenie.");
+      router.refresh();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        alert(err.message);
+      } else {
+        alert("Coś poszło nie tak.");
+      }
+    }
+  };
+
   return (
     <div className={styles.Matched}>
       <Header toggleSidebar={toggleSidebar} />
@@ -173,6 +204,7 @@ export default function Matched() {
                   description={offer.description}
                   onClick={() => handleOfferDetails(offer.offer_id)}
                   handleAccept={() => handleAcceptOffer(offer.offer_id)}
+                  handleReject={() => handleRejectOffer(offer.offer_id)}
                 />
               ))}
             {operators.map((operator) => (
