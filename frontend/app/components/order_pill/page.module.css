@@ -19,6 +19,10 @@
   font-size: clamp(0.9rem, 1.5vw, 1.2rem);
 }
 
+.Right {
+  cursor: pointer;
+}
+
 .Left p:first-child {
   font-weight: 700;
 }
