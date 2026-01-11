@@ -1,15 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-import Header from "../components/header/page";
-import Sidebar from "../components/sidebar/page";
+import Header from "@/app/components/header/page";
+import Sidebar from "@/app/components/sidebar/page";
 import styles from "./page.module.css";
-import ReviewBox from "../components/review_box/page";
+import ReviewBox from "@/app/components/review_box/page";
 import { Tooltip, Rating } from "@mui/material";
-import { UserdataGet } from "../types";
+import { UserdataGet } from "@/app/types";
 import EditIcon from "@mui/icons-material/Edit";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
+import { BASE_URL } from "@/app/constants";
 
 export default function Profile() {
+  const params = useParams();
+  const userId = params.id?.[0];
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [sortBy, setSortBy] = useState("");
   const [userData, setUserData] = useState<UserdataGet | null>(null);
@@ -35,7 +38,7 @@ export default function Profile() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch("http://127.0.0.1:5000/user/data", {
+        const res = await fetch(`${BASE_URL}/user/data`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

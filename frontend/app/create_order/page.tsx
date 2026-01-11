@@ -5,7 +5,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { OfferPost } from "../types";
-import { OFFER_TYPE } from "../constants";
+import { OFFER_TYPE, BASE_URL } from "../constants";
 import { useState } from "react";
 
 export default function ProfileForm() {
@@ -87,7 +87,7 @@ export default function ProfileForm() {
         offer.flight_date = formatDate(flightDate);
       }
 
-      const res = await fetch("http://127.0.0.1:5000/offer/", {
+      const res = await fetch(`${BASE_URL}/offer/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

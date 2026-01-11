@@ -5,6 +5,7 @@ import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
 import MatchedInfo from "../components/matched_info/page";
 import { OfferForm, UserdataGet } from "../types";
+import { BASE_URL } from "../constants";
 
 export default function Matched() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -28,7 +29,7 @@ export default function Matched() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch("http://127.0.0.1:5001/matches/offer", {
+        const res = await fetch(`${BASE_URL}/matches/offer`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +54,7 @@ export default function Matched() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch("http://127.0.0.1:5001/matches/operator", {
+        const res = await fetch(`${BASE_URL}/matches/operator`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

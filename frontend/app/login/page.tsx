@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
+import { BASE_URL } from "../constants";
 
 export default function Log() {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ export default function Log() {
     setError(null); // Clear previous errors
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/login", {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
         // replace with "http://backend:5000/auth/login" when running on docker
         method: "POST",
         headers: {

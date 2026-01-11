@@ -8,6 +8,7 @@ import { UserdataPost } from "../types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { UserdataGet } from "../types";
+import { BASE_URL } from "../constants";
 
 export default function ProfileForm() {
   const [userData, setUserData] = useState<UserdataGet | null>(null);
@@ -29,7 +30,7 @@ export default function ProfileForm() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch("http://127.0.0.1:5000/user/data", {
+        const res = await fetch(`${BASE_URL}/user/data`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export default function ProfileForm() {
         if (!token) {
           throw new Error("Brak tokena. Zaloguj się ponownie.");
         }
-        const res = await fetch("http://127.0.0.1:5000/offer/types", {
+        const res = await fetch(`${BASE_URL}/offer/types`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +123,7 @@ export default function ProfileForm() {
         products: products.length > 0 ? products : [],
       };
 
-      const res = await fetch("http://127.0.0.1:5000/user/data", {
+      const res = await fetch(`${BASE_URL}/user/data`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

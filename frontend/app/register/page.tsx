@@ -8,6 +8,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { FormControlLabel } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
+import { BASE_URL } from "../constants";
 
 export default function Register() {
   const [isOperator, setIsOperator] = useState<boolean>(false);
@@ -34,8 +35,7 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/register", {
-        // podmienić 127.0.0.1:5000 na backend:5000 dla dockera
+      const res = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
