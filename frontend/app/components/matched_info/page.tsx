@@ -57,7 +57,13 @@ const MatchedInfo: MatchedInfoComponent = ({
     >
       <div className={styles.MatchedInfo} onClick={onClick}>
         <div className={styles.TitleRow}>
-          <h2 onClick={handleGoUserPage} style={{ cursor: "pointer" }}>
+          <h2
+            onClick={(e) => {
+              e.stopPropagation();
+              handleGoUserPage();
+            }}
+            style={{ cursor: "pointer" }}
+          >
             {title}
           </h2>
           <div className={styles.Actions}>
