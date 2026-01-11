@@ -63,6 +63,7 @@ def all_capable_of_completing(offer: Offers, session: sqlmodel.Session) -> list[
             select(Users)
             .join(OperatorProducts)
             .where(OperatorProducts.offer_type_name == offer.offer_type)
+            .where(offer.client_id != Users.user_id)
         ).all()
     )
 

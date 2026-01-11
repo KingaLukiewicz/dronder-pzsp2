@@ -74,8 +74,10 @@ def get_userdata(user_id: int | None = None):
                         "offer_id": t[0].offer_id,
                         "reviewer": t[0].client.username,  # type: ignore
                         "rating": t[2],
-                        "review_date": t[0].deadline_date.strftime("%a, %d %b %G %T %Z"),
-                        "review": t[1]
+                        "review_date": t[0].deadline_date.strftime(
+                            "%a, %d %b %G %T %Z"
+                        ),
+                        "review": t[1],
                     }
                 ),
                 session.exec(
@@ -99,19 +101,20 @@ def get_userdata(user_id: int | None = None):
                         "reviewer": t[0].username,  # type: ignore
                         "rating": t[2],
                         "review": t[1],
-                        "review_date": t[3].deadline_date.strftime("%a, %d %b %G %T %Z")
+                        "review_date": t[3].deadline_date.strftime(
+                            "%a, %d %b %G %T %Z"
+                        ),
                     }
                 ),
                 session.exec(
-                    select(
-                        User, Offer.operator_review, Offer.operator_rating, Offer
-                    )
+                    select(User, Offer.operator_review, Offer.operator_rating, Offer)
                     .select_from(User)
                     .join(Matches)
                     .join(Offer)
                     .where(User.user_id == user_id)
                     .where(
-                        (Offer.operator_rating != None) | (Offer.operator_review != None)  # noqa: E711
+                        (Offer.operator_rating != None)
+                        | (Offer.operator_review != None)  # noqa: E711
                     )
                     .distinct(Offer.offer_id)  # type: ignore
                 ).all(),
@@ -186,9 +189,16 @@ def post_userdata():
             for operator_product in session.exec(
                 select(OfferTypes.name).where(OfferTypes.name == product)
             ).all():
-                session.add(
-                    OperatorProducts(operator_id=user_id, offer_type_name=operator_product)
-                )
+                if session.exec(
+                    select(OperatorProducts)
+                    .where(OperatorProducts.operator_id == user_id)
+                    .where(OperatorProducts.offer_type_name == operator_product)
+                ).first() is None:
+                    session.add(
+                        OperatorProducts(
+                            operator_id=user_id, offer_type_name=operator_product
+                        )
+                    )
 
         if data.role:
             match data.role:  # type: ignore
