@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import styles from "./page.module.css";
 import React, { PropsWithChildren, createContext, useContext } from "react";
 import { Review } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 type MatchedInfoContext = {
   user_id: number;
@@ -44,13 +45,21 @@ const MatchedInfo: MatchedInfoComponent = ({
   reviews,
   onClick,
 }) => {
+  const router = useRouter();
+
+  const handleGoUserPage = () => {
+    router.push(`/profile/${user_id}`);
+  };
+
   return (
     <MatchedInfoContext.Provider
       value={{ user_id, title, description, reviews }}
     >
       <div className={styles.MatchedInfo}>
         <div className={styles.TitleRow}>
-          <h2>{title}</h2>
+          <h2 onClick={handleGoUserPage} style={{ cursor: "pointer" }}>
+            {title}
+          </h2>
           <div className={styles.Actions}>
             <IconButton size="small" color="success">
               <CheckIcon />
