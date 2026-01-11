@@ -105,6 +105,8 @@ export default function Matched() {
         const text = await res.text();
         throw new Error(`Błąd podczas zapisu: ${text}`);
       }
+      alert("Zaakceptowałeś zlecenie.");
+      router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
@@ -140,6 +142,8 @@ export default function Matched() {
         const text = await res.text();
         throw new Error(`Błąd podczas zapisu: ${text}`);
       }
+      alert("Zaakceptowałeś operatora.");
+      router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
