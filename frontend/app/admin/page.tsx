@@ -61,12 +61,10 @@ export default function Admin() {
 
   const offers = data.number_of_offers_by_deadline;
 
-  // --- Generowanie danych dla zakresu ---
   const generateChartData = (): { name: string; zlecenia: number }[] => {
     const today = new Date();
 
     if (timeRange === "day") {
-      // Poprzedni miesiąc
       const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
       const daysInMonth = new Date(
         prevMonth.getFullYear(),
@@ -85,7 +83,6 @@ export default function Admin() {
     }
 
     if (timeRange === "month") {
-      // Poprzedni rok
       const year = today.getFullYear() - 1;
       return Array.from({ length: 12 }, (_, i) => {
         const monthNames = [
@@ -113,10 +110,9 @@ export default function Admin() {
     }
 
     if (timeRange === "year") {
-      // Ostatnie 5 lat
       const currentYear = today.getFullYear();
       return Array.from({ length: 5 }, (_, i) => {
-        const year = currentYear - i - 1; // poprzednie lata
+        const year = currentYear - i - 1;
         let sum = 0;
         for (const dateStr in offers) {
           if (dateStr.startsWith(String(year))) sum += offers[dateStr] || 0;

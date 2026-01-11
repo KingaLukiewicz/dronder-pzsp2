@@ -20,11 +20,10 @@ export default function Log() {
   }
 
   const handleLogin = async () => {
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
       const res = await fetch(`${BASE_URL}/auth/login`, {
-        // replace with "http://backend:5000/auth/login" when running on docker
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +36,6 @@ export default function Log() {
       }
       const data: Token = await res.json();
       sessionStorage.setItem("token", data.access_token);
-
       router.push("/profile");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -73,7 +71,7 @@ export default function Log() {
             src="/dronder_logo.png"
             alt="App logo"
             fill
-            style={{ objectFit: "contain" }} // or "cover"
+            style={{ objectFit: "contain" }}
           />
         </div>
         <TextField
