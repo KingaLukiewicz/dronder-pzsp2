@@ -180,3 +180,66 @@ Requires authentication with JWT token and checks if user is admin.
  - OK - with data about system
  - NOT_FOUND - user not found
  - FORBIDDEN - user is not admin
+
+
+### GET /user/weekdays/{user_id}
+
+Requires authentication with JWT token.
+If user_id not gived, the id is from JWT token.
+
+#### Request Body
+##### Content-Type: application/json
+| Field     | Type              | Description                                                  |
+| --------- | ----------------- | ------------------------------------------------------------ |
+| `weekday` | `Dict[str, bool]` | Indicates whether the operator is available on this weekday. |
+
+## Example
+```
+{
+    "Czwartek": true,
+    "Niedziela": true,
+    "Piątek": true,
+    "Poniedziałek": true,
+    "Sobota": true,
+    "Wtorek": true,
+    "Środa": false
+}
+```
+
+#### Response
+ - OK - with data about system
+ - NOT_FOUND - user not found
+
+
+
+### POST /user/weekdays
+
+Requires authentication with JWT token and checks if user is operator.
+
+#### Request Body
+##### Content-Type: application/json
+##### Schema
+
+| Field     | Type              | Description                                                  |
+| --------- | ----------------- | ------------------------------------------------------------ |
+| `weekday` | `Dict[str, bool]` | Indicates whether the operator is available on this weekday. |
+
+## Example
+```
+{
+    "weekdays": {
+    "Czwartek": true,
+    "Niedziela": true,
+    "Piątek": true,
+    "Poniedziałek": true,
+    "Sobota": true,
+    "Wtorek": true,
+    "Środa": false
+    }
+}
+```
+
+#### Response
+ - OK - with data about system
+ - NOT_FOUND - user not found
+ - FORBIDDEN - user is not operator
