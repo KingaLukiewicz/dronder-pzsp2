@@ -4,7 +4,8 @@ import phonenumbers
 from conftest import create_test_user, from_token, get_access_token
 
 from app.forms.offer import LocationForm
-from app.forms.user import UserdataForm
+from app.forms.user import UserdataForm, WeekdaysForm
+from app.forms.auth import LoginForm
 
 
 def test_userdata_endpoints_for_client(client: FlaskClient):
@@ -59,3 +60,83 @@ def test_userdata_endpoints_for_operator(client: FlaskClient):
     res = client.get("/user/data", headers=from_token(access_token))
     assert res.status_code == HTTPStatus.OK
     assert UserdataForm.model_validate(res.json) == userdata
+
+
+def test_get_weekdays_endpoint(client: FlaskClient):
+    user_id, _, login = create_test_user(client)
+    access_token = get_access_token(client, login)
+
+    res = client.get("/user/weekdays/3", headers=from_token(access_token))
+    assert res.status_code == HTTPStatus.OK
+    assert len(res.json) == 7
+
+    data = res.json
+    for day in (
+        "Poniedziałek", "Wtorek", "Czwartek", "Piątek",
+    ):
+        assert data[day] is True
+
+
+def test_post_delete_weekdays_endpoint(client: FlaskClient):
+    login = LoginForm.model_validate(
+        {
+            "email": "marian_maleczko@gmail.com",
+            "password": "drony4life"
+        }
+    )
+    access_token = get_access_token(client, login)
+
+    data = WeekdaysForm.model_validate(
+        {
+            "weekdays": {
+                "Poniedziałek": True,
+                "Wtorek": True,
+                "Środa": True,
+                "Czwartek": True,
+                "Piątek": True,
+                "Sobota": True,
+                "Niedziela": True,
+            }
+        }
+    )
+
+    res = client.post(
+        "/user/weekdays", json=data.model_dump(), headers=from_token(access_token)
+    )
+
+    res = client.get("/user/weekdays", headers=from_token(access_token))
+    assert res.status_code == HTTPStatus.OK
+    assert len(res.json) == 7
+
+    data = res.json
+    for day in (
+        "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek",
+        "Sobota", "Niedziela"
+    ):
+        assert data[day] is True
+
+    data = WeekdaysForm.model_validate(
+        {
+            "weekdays": {
+                "Poniedziałek": False,
+                "Wtorek": False
+            }
+        }
+    )
+    res = client.post(
+        "/user/weekdays", json=data.model_dump(), headers=from_token(access_token)
+    )
+
+    res = client.get("/user/weekdays", headers=from_token(access_token))
+    assert res.status_code == HTTPStatus.OK
+
+    data = res.get_json()
+
+    assert data["Poniedziałek"] is False
+    assert data["Wtorek"] is False
+
+    for day in (
+        "Środa", "Czwartek", "Piątek",
+        "Sobota", "Niedziela"
+    ):
+        assert data[day] is True
