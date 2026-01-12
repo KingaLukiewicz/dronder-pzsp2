@@ -261,7 +261,7 @@ def post_avaiable_weekdays():
         rows_to_remove = session.exec(
             select(AvailableWeekdays).where(
                 AvailableWeekdays.operator_id == operator_id,
-                AvailableWeekdays.weekday.in_(to_remove)
+                AvailableWeekdays.weekday.in_(to_remove)  # type: ignore
             )
         ).all()
 
