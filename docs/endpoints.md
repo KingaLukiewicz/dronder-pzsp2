@@ -180,3 +180,23 @@ Requires authentication with JWT token and checks if user is admin.
  - OK - with data about system
  - NOT_FOUND - user not found
  - FORBIDDEN - user is not admin
+
+
+### POST /decline/operator/<offer_id>/<operator_id>
+
+Requires authentication with JWT token.
+
+#### URL Parameters
+| Parameter      | Type    | Description                               |
+| -------------- | ------- | ----------------------------------------  |
+| `offer_id`     | integer | ID of the offer                           |
+| `operator_id`  | integer | ID of the operator to decline             |
+
+
+#### Response
+| Status Code | Description                                           |
+| ----------- | ----------------------------------------------------  |
+| 200 OK      | Operator was successfully declined (match updated)    |
+| 404 NOT_FOUND | No match exists between the offer and operator      |
+
+
