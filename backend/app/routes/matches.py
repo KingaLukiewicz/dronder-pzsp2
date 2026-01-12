@@ -148,6 +148,7 @@ def decline_operator(offer_id: int, operator_id: int):
         if match is None:
             return "", HTTPStatus.NOT_FOUND
 
+        match.status = MatchingStatus.NOT_INTERESTED.value
         session.delete(match)
         session.commit()
         return "", HTTPStatus.OK
