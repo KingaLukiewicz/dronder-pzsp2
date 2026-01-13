@@ -32,7 +32,7 @@ type Props = PropsWithChildren & {
   reviews?: Review[];
   onClick?: () => void;
   handleAccept: () => void;
-  handleReject?: () => void;
+  handleReject: () => void;
 };
 
 type MatchedInfoComponent = React.FC<Props> & {
