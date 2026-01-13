@@ -1,6 +1,7 @@
 .Profile {
   margin-top: 15vh;
   color: black;
+  overflow-y: scroll;
 }
 
 .Profile h1 {
@@ -27,7 +28,7 @@
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
     -5px -5px 10px rgba(0, 0, 0, 0.05);
   border-radius: 20px;
-  height: 30vh;
+  height: 40vh;
   width: 90%;
   overflow: auto;
   font-size: clamp(1rem, 1.2vw, 3rem);
@@ -80,6 +81,7 @@
   margin-top: 2vh;
   width: 90%;
   gap: 10px;
+  margin-bottom: 3vh;
 }
 
 .EditIcon {

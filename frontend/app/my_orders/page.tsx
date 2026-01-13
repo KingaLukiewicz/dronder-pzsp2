@@ -69,7 +69,6 @@ export default function MyOrders() {
           },
         });
         const data: OfferForm[] = await res.json();
-
         setFinalized(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch", error);

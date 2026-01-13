@@ -3,7 +3,9 @@
 import Header from "../components/header/page";
 import Sidebar from "../components/sidebar/page";
 import styles from "./page.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { BASE_URL } from "../constants";
+import { OfferForm } from "../types";
 
 import {
   Calendar as BigCalendar,
@@ -35,37 +37,58 @@ const localizer = dateFnsLocalizer({
 
 export default function Calendar() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [events, setEvents] = useState<EventType[]>([]);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
 
-  const [events, setEvents] = useState<
-    { id: string; title: string; start: Date; end: Date }[]
-  >([
-    {
-      id: "1",
-      title: "Ortofotomapa",
-      start: new Date("2026-01-12"),
-      end: new Date("2026-01-12"),
-    },
-    {
-      id: "2",
-      title: "Chmura punktów",
-      start: new Date("2026-01-15"),
-      end: new Date("2026-01-15"),
-    },
-  ]);
+  useEffect(() => {
+    const fetchOngoingOffers = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch(`${BASE_URL}/offer/ongoing`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data: OfferForm[] = await res.json();
+        if (!Array.isArray(data)) return;
 
-  const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
-    const title = prompt("Podaj nazwę wydarzenia:");
-    if (title) {
-      setEvents([
-        ...events,
-        { id: String(events.length + 1), title, start, end },
-      ]);
-    }
-  };
+        const ongoingEvents: EventType[] = data.flatMap((offer) => {
+          const events: EventType[] = [];
+          if (offer.deadline_date) {
+            events.push({
+              id: `${offer.offer_id}-deadline`,
+              title: `${offer.offer_type} - deadline`,
+              start: new Date(offer.deadline_date),
+              end: new Date(offer.deadline_date),
+            });
+          }
+          if (offer.flight_date) {
+            events.push({
+              id: `${offer.offer_id}-flight`,
+              title: `${offer.offer_type} - flight`,
+              start: new Date(offer.flight_date),
+              end: new Date(offer.flight_date),
+            });
+          }
+          return events;
+        });
+
+        setEvents((prev) => [...prev, ...ongoingEvents]);
+      } catch (error) {
+        console.error("Failed to fetch ongoing offers:", error);
+      }
+    };
+
+    fetchOngoingOffers();
+  }, []);
 
   const handleSelectEvent = (event: EventType) => {
     alert(`Wybrane wydarzenie: ${event.title}`);
@@ -85,7 +108,6 @@ export default function Calendar() {
             endAccessor="end"
             titleAccessor="title"
             selectable
-            onSelectSlot={handleSelectSlot}
             onSelectEvent={handleSelectEvent}
             style={{ height: 600 }}
             views={[Views.MONTH, Views.WEEK, Views.DAY]}

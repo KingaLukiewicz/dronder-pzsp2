@@ -17,6 +17,9 @@ export default function Profile() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [sortBy, setSortBy] = useState("");
   const [userData, setUserData] = useState<UserdataGet | null>(null);
+  const [weekdays, setWeekdays] = useState<Record<string, boolean> | null>(
+    null
+  );
   const totalReviews = userData?.reviews?.length ?? 0;
   const averageRating =
     totalReviews > 0
@@ -93,6 +96,55 @@ export default function Profile() {
     fetchUserData();
   }, [userId, router]);
 
+  useEffect(() => {
+    const fetchWeekdays = async () => {
+      if (!userData?.user_id) return;
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+        const res = await fetch(
+          `${BASE_URL}/user/weekdays/${userData?.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
+
+        const data: Record<string, boolean> = await res.json();
+
+        const orderedDays = [
+          "Poniedziałek",
+          "Wtorek",
+          "Środa",
+          "Czwartek",
+          "Piątek",
+          "Sobota",
+          "Niedziela",
+        ];
+        const initialWeekdays: Record<string, boolean> = {};
+        orderedDays.forEach((day) => {
+          initialWeekdays[day] = !!data[day];
+        });
+
+        setWeekdays(initialWeekdays);
+      } catch (err) {
+        console.error("Failed to fetch weekdays:", err);
+      }
+    };
+
+    if (userData?.role === "operator") fetchWeekdays();
+  }, [userData?.role, userData?.user_id]);
+
   return (
     <div className={styles.Profile}>
       <Header toggleSidebar={toggleSidebar} />
@@ -130,6 +182,27 @@ export default function Profile() {
                       </ul>
                     </>
                   )}
+
+                {userData.role === "operator" && weekdays && (
+                  <>
+                    <h3>Dostępność czasowa</h3>
+                    <ul className={styles.WeekdaysList}>
+                      {[
+                        "Poniedziałek",
+                        "Wtorek",
+                        "Środa",
+                        "Czwartek",
+                        "Piątek",
+                        "Sobota",
+                        "Niedziela",
+                      ].map((day) => (
+                        <li key={day}>
+                          {day}: {weekdays[day] ? "Dostępny" : "Niedostępny"}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
                 {userData.reviews && (
                   <>
                     <div className={styles.Rating}>
@@ -172,6 +245,7 @@ export default function Profile() {
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
+          <option value="">--Sortuj według--</option>
           <option value="new">Od najnowszych</option>
           <option value="best">Od najlepszych</option>
           <option value="worst">Od najgorszych</option>

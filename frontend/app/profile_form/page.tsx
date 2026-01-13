@@ -21,6 +21,7 @@ export default function ProfileForm() {
   const [selectedOffers, setSelectedOffers] = useState<Record<string, boolean>>(
     {}
   );
+  const [weekdays, setWeekdays] = useState<Record<string, boolean>>({});
   const router = useRouter();
 
   useEffect(() => {
@@ -99,6 +100,55 @@ export default function ProfileForm() {
     });
   };
 
+  useEffect(() => {
+    const fetchWeekdays = async () => {
+      if (!userData?.user_id) return;
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+        const res = await fetch(
+          `${BASE_URL}/user/weekdays/${userData?.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
+
+        const data: Record<string, boolean> = await res.json();
+
+        const orderedDays = [
+          "Poniedziałek",
+          "Wtorek",
+          "Środa",
+          "Czwartek",
+          "Piątek",
+          "Sobota",
+          "Niedziela",
+        ];
+        const initialWeekdays: Record<string, boolean> = {};
+        orderedDays.forEach((day) => {
+          initialWeekdays[day] = !!data[day];
+        });
+
+        setWeekdays(initialWeekdays);
+      } catch (err) {
+        console.error("Failed to fetch weekdays:", err);
+      }
+    };
+
+    if (role === "operator") fetchWeekdays();
+  }, [role, userData?.user_id]);
+
   const handleSubmit = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -134,8 +184,27 @@ export default function ProfileForm() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Błąd podczas zapisu: ${text}`);
+        throw new Error(`Błąd podczas zapisu danych użytkownika: ${text}`);
       }
+
+      if (role === "operator") {
+        const weekdaysPayload = { weekdays };
+
+        const resWeekdays = await fetch(`${BASE_URL}/user/weekdays`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(weekdaysPayload),
+        });
+
+        if (!resWeekdays.ok) {
+          const text = await resWeekdays.text();
+          throw new Error(`Błąd podczas zapisu dostępności: ${text}`);
+        }
+      }
+
       router.push("/profile");
       alert("Profil został zaktualizowany!");
     } catch (err: unknown) {
@@ -209,6 +278,39 @@ export default function ProfileForm() {
                 onChange={(e) => setRange(e.target.value)}
               />
             </div>
+            <h2>Dostępność czasowa</h2>
+            <FormGroup>
+              {[
+                "Poniedziałek",
+                "Wtorek",
+                "Środa",
+                "Czwartek",
+                "Piątek",
+                "Sobota",
+                "Niedziela",
+              ].map((day) => (
+                <FormControlLabel
+                  key={day}
+                  control={
+                    <Checkbox
+                      checked={weekdays[day] || false}
+                      onChange={(e) =>
+                        setWeekdays((prev) => ({
+                          ...prev,
+                          [day]: e.target.checked,
+                        }))
+                      }
+                      name={day}
+                      sx={{
+                        color: "#ffffff",
+                        "&.Mui-checked": { color: "#ffffff" },
+                      }}
+                    />
+                  }
+                  label={day}
+                />
+              ))}
+            </FormGroup>
           </>
         )}
 

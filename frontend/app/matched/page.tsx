@@ -185,6 +185,43 @@ export default function Matched() {
     }
   };
 
+  const handleRejectOperator = async (
+    offer_id: number,
+    operator_id: number
+  ) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("Brak tokena. Zaloguj się ponownie.");
+      }
+
+      const res = await fetch(
+        `${BASE_URL}/matches/decline/operator/${offer_id}/${operator_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Błąd podczas zapisu: ${text}`);
+      }
+      alert("Odrzuciłeś operatora.");
+      router.refresh();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        alert(err.message);
+      } else {
+        alert("Coś poszło nie tak.");
+      }
+    }
+  };
+
   return (
     <div className={styles.Matched}>
       <Header toggleSidebar={toggleSidebar} />
@@ -220,6 +257,10 @@ export default function Matched() {
                 handleAccept={() =>
                   operator.offer_id &&
                   handleAcceptOperator(operator.offer_id, operator.user_id)
+                }
+                handleReject={() =>
+                  operator.offer_id &&
+                  handleRejectOperator(operator.offer_id, operator.user_id)
                 }
               >
                 <MatchedInfo.Rating />
