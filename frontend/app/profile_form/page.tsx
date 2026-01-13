@@ -102,17 +102,21 @@ export default function ProfileForm() {
 
   useEffect(() => {
     const fetchWeekdays = async () => {
+      if (!userData?.user_id) return;
       try {
         const token = sessionStorage.getItem("token");
         if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
 
-        const res = await fetch(`${BASE_URL}/user/weekdays`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${BASE_URL}/user/weekdays/${userData?.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) {
           const text = await res.text();
@@ -143,7 +147,7 @@ export default function ProfileForm() {
     };
 
     if (role === "operator") fetchWeekdays();
-  }, [role]);
+  }, [role, userData?.user_id]);
 
   const handleSubmit = async () => {
     try {
