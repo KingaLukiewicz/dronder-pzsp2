@@ -65,6 +65,7 @@ export type ReviewPost = {
 
 export type Review = {
   offer_id: number;
+  review_date?: string;
   rating: number;
   review?: string;
   reviewer: string;

@@ -9,6 +9,7 @@ import { UserdataGet } from "@/app/types";
 import EditIcon from "@mui/icons-material/Edit";
 import { useRouter, useParams } from "next/navigation";
 import { BASE_URL } from "@/app/constants";
+import { useMemo } from "react";
 
 export default function Profile() {
   const params = useParams();
@@ -30,6 +31,31 @@ export default function Profile() {
   const handleEdit = () => {
     router.push("/profile_form");
   };
+  const sortedReviews = useMemo(() => {
+    if (!userData?.reviews) return [];
+
+    const reviews = [...userData.reviews];
+
+    switch (sortBy) {
+      case "new":
+        return reviews.sort((a, b) => {
+          const dateA = a.review_date ? new Date(a.review_date).getTime() : 0;
+
+          const dateB = b.review_date ? new Date(b.review_date).getTime() : 0;
+
+          return dateB - dateA; // newest first
+        });
+
+      case "best":
+        return reviews.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+
+      case "worst":
+        return reviews.sort((a, b) => (a.rating ?? 0) - (b.rating ?? 0));
+
+      default:
+        return reviews;
+    }
+  }, [userData?.reviews, sortBy]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -119,7 +145,19 @@ export default function Profile() {
                           </span>
                         </Tooltip>
                       </div>
-                      <p>{`${totalReviews} oceny`}</p>
+                      <p>
+                        {totalReviews}{" "}
+                        {totalReviews === 1
+                          ? "ocena"
+                          : totalReviews % 10 >= 2 &&
+                            totalReviews % 10 <= 4 &&
+                            !(
+                              totalReviews % 100 >= 12 &&
+                              totalReviews % 100 <= 14
+                            )
+                          ? "oceny"
+                          : "ocen"}
+                      </p>
                     </div>
                   </>
                 )}
@@ -134,13 +172,18 @@ export default function Profile() {
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
-          <option value="">-- Sortuj według --</option>
           <option value="new">Od najnowszych</option>
           <option value="best">Od najlepszych</option>
           <option value="worst">Od najgorszych</option>
         </select>
         <div className={styles.Reviews}>
-          <ReviewBox />
+          {sortedReviews.length === 0 ? (
+            <p>Ten użytkownik nie ma jeszcze opinii</p>
+          ) : (
+            sortedReviews.map((review, index) => (
+              <ReviewBox key={index} review={review} />
+            ))
+          )}
         </div>
       </main>
     </div>
