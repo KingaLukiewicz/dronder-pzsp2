@@ -43,4 +43,3 @@ def test_insert_and_select_parameter(test_engine):
         result = session.execute(select(Parameters)).scalars().all()
         assert len(result) == 1
         assert result[0].name == "GSD"
-

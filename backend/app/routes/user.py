@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from sqlmodel import Session, select
 
 from app.db import get_db_session
-from app.forms.user import LocationForm, Review, UserdataForm
+from app.forms.user import LocationForm, Review, UserdataForm, WeekdaysForm, WeekdayEnum
 from app.models import (
     Groups,
     Locations,
@@ -19,6 +19,7 @@ from app.models import (
     OperatorProducts,
     Users as User,
     Offers as Offer,
+    AvailableWeekdays
 )
 
 
@@ -215,3 +216,94 @@ def post_userdata():
         session.commit()
 
         return jsonify({"msg": "ok"}), HTTPStatus.OK
+
+
+@bp.post("/weekdays")
+@jwt_required()
+def post_avaiable_weekdays():
+    operator_id = int(get_jwt_identity())
+    with get_db_session() as session:
+        try:
+            data = WeekdaysForm.model_validate(request.json)
+        except ValidationError as e:
+            return e.json(), HTTPStatus.BAD_REQUEST
+
+        user = session.exec(select(User).where(User.user_id == operator_id)).one_or_none()
+        if user is None:
+            logging.info(
+                "Request to data of nonexistent user.",
+                stack_info=True,
+                extra={"user_id": operator_id},
+            )
+            return jsonify({"reason": "non existent"}), HTTPStatus.NOT_FOUND
+        if not user.group.operator:
+            logging.info(
+                "User is not operator",
+                stack_info=True,
+                extra={"user_id": operator_id},
+            )
+            return jsonify({"reason": "User is not operator"}), HTTPStatus.FORBIDDEN
+
+        current_days = set(
+            session.exec(
+                select(AvailableWeekdays.weekday).where(
+                    AvailableWeekdays.operator_id == operator_id
+                )
+            ).all()
+        )
+
+        days_to_add = {day for day, available in data.weekdays.items() if available}
+        days_to_remove = {day for day, available in data.weekdays.items() if not available}
+
+        to_add = days_to_add - current_days
+        to_remove = days_to_remove & current_days
+
+        rows_to_remove = session.exec(
+            select(AvailableWeekdays).where(
+                AvailableWeekdays.operator_id == operator_id,
+                AvailableWeekdays.weekday.in_(to_remove)  # type: ignore
+            )
+        ).all()
+
+        for row in rows_to_remove:
+            session.delete(row)
+
+        session.add_all(
+            AvailableWeekdays(
+                operator_id=operator_id,
+                weekday=day
+            )
+            for day in to_add
+        )
+
+        session.commit()
+        return jsonify({"msg": "ok"}), HTTPStatus.OK
+
+
+@bp.get("/weekdays")
+@bp.get("/weekdays/<int:user_id>")
+@jwt_required()
+def get_weekdays(user_id: int | None = None):
+    user_id = user_id or int(get_jwt_identity())
+    with get_db_session() as session:
+        user = session.exec(select(User).where(User.user_id == user_id)).one_or_none()
+        if user is None:
+            logging.info(
+                "Request to data of nonexistent user.",
+                stack_info=True,
+                extra={"user_id": user_id},
+            )
+            return jsonify({"reason": "non existent"}), HTTPStatus.NOT_FOUND
+
+        available_days = set(
+            session.exec(
+                select(AvailableWeekdays.weekday).where(
+                    AvailableWeekdays.operator_id == user_id
+                )
+            ).all()
+        )
+
+        return jsonify({
+            day.value: day.value in available_days
+            for day in WeekdayEnum
+        }), HTTPStatus.OK
