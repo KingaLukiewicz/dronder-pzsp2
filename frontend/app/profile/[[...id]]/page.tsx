@@ -172,6 +172,7 @@ export default function Profile() {
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
+          <option value="">--Sortuj według--</option>
           <option value="new">Od najnowszych</option>
           <option value="best">Od najlepszych</option>
           <option value="worst">Od najgorszych</option>
