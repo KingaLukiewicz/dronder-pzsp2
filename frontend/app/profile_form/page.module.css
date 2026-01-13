@@ -48,6 +48,17 @@
   width: 80%;
 }
 
+.InputLong {
+  height: 4vh;
+  background-color: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding-left: 0.5vw;
+  width: 90%;
+}
+
 .LocationRow {
   display: flex;
   flex-direction: row;

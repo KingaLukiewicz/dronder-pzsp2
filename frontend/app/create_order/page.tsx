@@ -1,19 +1,14 @@
 "use client";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { OfferPost } from "../types";
-import { OFFER_TYPE } from "../constants";
-import { useState } from "react";
+import { BASE_URL } from "../constants";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function ProfileForm() {
+export default function CreateOrderForm() {
   const [description, setDescription] = useState("");
   const [service, setService] = useState("");
-  const [gsd, setGSD] = useState("");
-  const [accuracy, setAccuracy] = useState("");
-  const [file, setFile] = useState("");
   const [locationMode, setLocationMode] = useState<"address" | "coords">(
     "address"
   );
@@ -23,17 +18,62 @@ export default function ProfileForm() {
   const [radius, setRadius] = useState("");
   const [deadline, setDeadline] = useState("");
   const [flightDate, setFlightDate] = useState("");
-  const [state, setState] = useState({
-    rtk: false,
-    photopoints: false,
-  });
+  const [offerTypes, setOfferTypes] = useState<string[]>([]);
+  const [parameters, setParameters] = useState<
+    { name: string; value: string }[]
+  >([]);
+  const router = useRouter();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
-  };
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch(`${BASE_URL}/offer/types`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data: string[] = await res.json();
+
+        setOfferTypes(data);
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  useEffect(() => {
+    const fetchParameters = async () => {
+      if (!service) return;
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch(`${BASE_URL}/offer/parameters/${service}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data: string[] = await res.json();
+        const params = data.map((p) => ({ name: p, value: "" }));
+        setParameters(params);
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+
+    fetchParameters();
+  }, [service]);
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -74,20 +114,14 @@ export default function ProfileForm() {
         offer_type: service,
         deadline_date: formatDate(deadline),
         location: locationPayload,
-        format: file,
-        parameters: [
-          { name: "GSD", value: gsd },
-          { name: "accuracy", value: accuracy },
-          { name: "RTK", value: rtk ? "true" : "false" },
-          { name: "photopoints", value: photopoints ? "true" : "false" },
-        ],
+        parameters: parameters,
       };
 
       if (flightDate) {
         offer.flight_date = formatDate(flightDate);
       }
 
-      const res = await fetch("http://127.0.0.1:5000/offer/", {
+      const res = await fetch(`${BASE_URL}/offer/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,13 +136,13 @@ export default function ProfileForm() {
       }
 
       alert("Zlecenie zostało utworzone!");
+      router.push("/my_orders");
     } catch (err: unknown) {
       console.error(err);
       if (err instanceof Error) alert(err.message);
     }
   };
 
-  const { rtk, photopoints } = state;
   return (
     <div className={styles.Form}>
       <h1>Utwórz zlecenie</h1>
@@ -127,75 +161,28 @@ export default function ProfileForm() {
           onChange={(e) => setService(e.target.value)}
         >
           <option value="">-- Wybierz usługę --</option>
-          <option value={OFFER_TYPE.MAP}>Ortofotomapy</option>
-          <option value={OFFER_TYPE.NMP}>Numeryczne Modele Terenu</option>
-          {/* <option value="nmpt">Numeryczne Modele Pokrycia Terenu</option> */}
-          <option value={OFFER_TYPE.CLOUD}>Chmury Punktów</option>
-          <option value={OFFER_TYPE.MESH}>Modele Mesh 3D</option>
-          <option value={OFFER_TYPE.SCANNING}>Scanning Laserowy</option>
+          {offerTypes.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
         </select>
         <h2>Parametry</h2>
-        <div className={styles.ParamRow}>
-          <label htmlFor="gsd">GSD:</label>
-          <input
-            className={styles.Input}
-            id="gsd"
-            value={gsd}
-            onChange={(e) => setGSD(e.target.value)}
-          />
-        </div>
-        <div className={styles.ParamRow}>
-          <label htmlFor="accuracy">Dokładność:</label>
-          <input
-            className={styles.Input}
-            id="accuracy"
-            value={accuracy}
-            onChange={(e) => setAccuracy(e.target.value)}
-          />
-        </div>
-        <div className={styles.ParamRow}>
-          <label htmlFor="file">Format pliku:</label>
-          <input
-            className={styles.Input}
-            id="file"
-            value={file}
-            onChange={(e) => setFile(e.target.value)}
-          />
-        </div>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={rtk}
-                onChange={handleChange}
-                name="rtk"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Czy dron ma posiadać odbiornik RTK?"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={photopoints}
-                onChange={handleChange}
-                name="photopoints"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Czy mają być wykonane pomiary fotopunktów?"
-          />
-        </FormGroup>
+        {parameters.map((param, idx) => (
+          <div key={idx} className={styles.ParamRow}>
+            <label htmlFor={param.name}>{param.name}:</label>
+            <input
+              className={styles.Input}
+              id={param.name}
+              value={param.value}
+              onChange={(e) => {
+                const newParams = [...parameters];
+                newParams[idx].value = e.target.value;
+                setParameters(newParams);
+              }}
+            />
+          </div>
+        ))}
         <h2>Lokalizacja</h2>
         <label>
           <input

@@ -1,23 +1,17 @@
 "use client";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import Rating from "@mui/material/Rating";
 import { ReviewPost } from "../../types";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/app/constants";
 
 export default function RateOrderForm() {
   const { id } = useParams();
   const offerId = Number(id);
   const [rating, setRating] = useState<number | null>(0);
   const [description, setDescription] = useState("");
-  const [completed, setCompleted] = useState<boolean | null>(null);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -31,7 +25,7 @@ export default function RateOrderForm() {
         review: description || undefined,
       };
 
-      const res = await fetch("http://127.0.0.1:5000/review/", {
+      const res = await fetch(`${BASE_URL}/review/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,44 +51,6 @@ export default function RateOrderForm() {
     <div className={styles.Form}>
       <h1>Oceń zlecenie</h1>
       <main className={styles.MainContent}>
-        <FormControl component="fieldset">
-          <FormLabel
-            sx={{ color: "#ffffff", "&.Mui-focused": { color: "#ffffff" } }}
-          >
-            Czy zlecenie odbyło się?
-          </FormLabel>
-          <RadioGroup
-            row
-            value={completed === null ? "" : completed ? "yes" : "no"}
-            onChange={(e) => setCompleted(e.target.value === "yes")}
-          >
-            <FormControlLabel
-              value="yes"
-              control={
-                <Radio
-                  sx={{
-                    color: "#ffffff",
-                    "&.Mui-checked": { color: "#ffffff" },
-                  }}
-                />
-              }
-              label="Tak"
-            />
-            <FormControlLabel
-              value="no"
-              control={
-                <Radio
-                  sx={{
-                    color: "#ffffff",
-                    "&.Mui-checked": { color: "#ffffff" },
-                  }}
-                />
-              }
-              label="Nie"
-            />
-          </RadioGroup>
-        </FormControl>
-
         <h2>Twoja ocena</h2>
         <Rating
           name="simple-controlled"

@@ -136,3 +136,13 @@ body {
   height: 20vh;
   margin-bottom: 4vh;
 }
+
+.Checkbox {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  color: black;
+  margin-bottom: 1vh;
+  font-size: 1.5vw;
+  width: 30vw;
+}
