@@ -1,25 +1,37 @@
 "use client";
 
 import { Rating, Tooltip } from "@mui/material";
+import { Review } from "../types";
 import styles from "./page.module.css";
 
-const ReviewBox = () => {
+type ReviewBoxProps = {
+  review: Review;
+};
+
+const ReviewBox = ({ review }: ReviewBoxProps) => {
+  const ratingValue = review.rating ?? 0;
+
   return (
     <div className={styles.ReviewBox}>
       <div className={styles.Author}>
-        <p>Author</p>
-        <Tooltip placement="top" title={`${(4.5).toFixed(1)} / 5`}>
+        <p>{review.reviewer ?? "Anonymous"}</p>
+        <Tooltip placement="top" title={`${ratingValue.toFixed(1)} / 5`}>
           <span>
-            <Rating name="read-only" value={4.5} precision={0.5} readOnly />
+            <Rating
+              name="read-only"
+              value={ratingValue}
+              precision={0.5}
+              readOnly
+            />
           </span>
         </Tooltip>
       </div>
+
       <div className={styles.Content}>
-        <p>
-          Nam magna turpis, bibendum varius risus ac, efficitur fringilla orci.
-        </p>
+        <p>{review.review ?? "..."}</p>
       </div>
     </div>
   );
 };
+
 export default ReviewBox;

@@ -3,8 +3,10 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 from sqlmodel import select
-
-from app.routes import offer, review
+from apscheduler.schedulers.background import BackgroundScheduler  # type: ignore
+from app.matching import update_all_matches
+from app.notifications import socketio
+from app.routes import matches, offer, review, admin
 
 from .routes import auth, user
 from .config import DATABASE_URL, JWT_ALGORITHM, JWT_SECRET, JWT_SECRET_KEY
@@ -21,12 +23,20 @@ app.register_blueprint(auth.bp)
 app.register_blueprint(user.bp)
 app.register_blueprint(offer.bp)
 app.register_blueprint(review.bp)
+app.register_blueprint(matches.bp)
+app.register_blueprint(admin.bp)
 
 _ = CORS(app)  # type: ignore
 _ = JWTManager(app)  # type: ignore
 
 with app.app_context():
     init_db()
+    socketio.init_app(app)
+
+if __name__ == "__main__":
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(update_all_matches, "interval", minutes=1)  # pyright: ignore[reportUnknownMemberType]
+    scheduler.start()  # pyright: ignore[reportUnknownMemberType]
 
 
 @app.route("/")

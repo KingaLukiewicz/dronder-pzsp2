@@ -82,8 +82,9 @@ INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VA
 
 
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
-('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 123456789, 1, 2),
-('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 987654321, Null, 3);
+('marek_lewandowski@gmail.com', 'marek_admin', 'admin1234', '123456789', NULL, 1),
+('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', '123456789', 1, 2),
+('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', '127654321', Null, 3);
 INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES
 ('adam_kowalczyk@gmail.com', 'adam_drontech', 'haslo123', 'Operator UAV z 5-letnim doświadczeniem', '555111222', 3, 2),
 ('ewa_nowak@gmail.com', 'ewa_inwestor', 'bezpiecznehaslo', 'Inwestor nieruchomości', '555333444', 4, 3),
@@ -270,7 +271,30 @@ INSERT INTO public."Matches" (operator_id, offer_id, status) VALUES
 (1, 8, 'finalized'),
 (1, 9, 'finalized');
 
-
+INSERT INTO public."Operator_Products" (operator_id, offer_type_name) VALUES
+(1, 'Ortofotomapa'),
+(1, 'Numeryczne'),
+(1, 'Chmura punktów'),
+(1, 'Modele mesh 3D'),
+(2, 'Ortofotomapa'),
+(2, 'Numeryczne'),
+(2, 'Chmura punktów'),
+(2, 'Modele mesh 3D'),
+(3, 'Ortofotomapa'),
+(3, 'Numeryczne'),
+(3, 'Chmura punktów'),
+(3, 'Modele mesh 3D'),
+(4, 'Ortofotomapa'),
+(4, 'Numeryczne'),
+(4, 'Chmura punktów'),
+(4, 'Modele mesh 3D'),
+(6, 'Ortofotomapa'),
+(6, 'Numeryczne'),
+(6, 'Chmura punktów'),
+(6, 'Modele mesh 3D'),
+(5, 'Skaning laserowy'),
+(2, 'Skaning laserowy'),
+(1, 'Skaning laserowy');
 
 UPDATE public."Offers"
 SET
