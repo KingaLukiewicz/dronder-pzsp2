@@ -61,6 +61,24 @@ export default function OrderPage() {
         {offerData ? (
           <div className={styles.MainContent}>
             <div className={styles.Section}>
+              <h2>Strony zlecenia</h2>
+              <p>
+                Operator: {offerData.operator_id ? (
+                  <a href={`/profile/${offerData.operator_id}`}>
+                    {offerData.operator_name}
+                  </a>
+                ) : "-"}
+              </p>
+              <p>
+                Zleceniodawca: {offerData.client_id ? (
+                  <a href={`/profile/${offerData.client_id}`}>
+                    {offerData.client_name}
+                  </a>
+                ) : "-"}
+              </p>
+            </div>
+
+            <div className={styles.Section}>
               <h2>Typ usługi</h2>
               <p>{offerData.offer_type || "-"}</p>
             </div>
