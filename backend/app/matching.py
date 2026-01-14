@@ -1,9 +1,18 @@
+from datetime import date
 from enum import Enum
+import logging
 from typing import Final
 
 import sqlmodel
 from app.db import get_db_session
-from app.models import Matches, Offers, OperatorProducts, Users
+from app.models import (
+    AvailableWeekdays,
+    Matches,
+    Offers,
+    OperatorProducts,
+    Users,
+    Weekdays,
+)
 import geopy.distance  # type: ignore
 from sqlmodel import select, func
 
@@ -57,15 +66,63 @@ def client_rating_penalty(user: Users, session: sqlmodel.Session) -> float:
     )
 
 
+def get_weekdays() -> list[Weekdays]:
+    with get_db_session() as session:
+        return list(session.exec(select(Weekdays)).all())
+
+
+def get_weekday_from_date(date: date) -> Weekdays:
+    weekdays = get_weekdays()
+
+    def find_weekday(which: str) -> Weekdays:
+        for day in weekdays:
+            if day.weekday == which:
+                return day
+        raise ValueError
+
+    # INSERT INTO public."Weekdays" (weekday) VALUES
+    # ('Poniedziałek'),
+    # ('Wtorek'),
+    # ('Środa'),
+    # ('Czwartek'),
+    # ('Piątek'),
+    # ('Sobota'),
+    # ('Niedziela');
+
+    match date.weekday():
+        case 0:
+            return find_weekday("Poniedziałek")
+        case 1:
+            return find_weekday("Wtorek")
+        case 2:
+            return find_weekday("Środa")
+        case 3:
+            return find_weekday("Czwartek")
+        case 4:
+            return find_weekday("Piątek")
+        case 5:
+            return find_weekday("Sobota")
+        case 6:
+            return find_weekday("Niedziela")
+        case _:
+            raise ValueError
+
+
 def all_capable_of_completing(offer: Offers, session: sqlmodel.Session) -> list[Users]:
-    return list(
-        session.exec(
-            select(Users)
-            .join(OperatorProducts)
-            .where(OperatorProducts.offer_type_name == offer.offer_type)
-            .where(offer.client_id != Users.user_id)
-        ).all()
+    stmt = (
+        select(Users)
+        .join(OperatorProducts)
+        .where(OperatorProducts.offer_type_name == offer.offer_type)
+        .where(offer.client_id != Users.user_id)
     )
+
+    if offer.flight_date is not None:
+        stmt = stmt.join(AvailableWeekdays).where(
+            AvailableWeekdays.weekday
+            == get_weekday_from_date(offer.flight_date).weekday
+        )
+
+    return list(session.exec(stmt).all())
 
 
 def update_matches(offer: Offers, session: sqlmodel.Session):
@@ -102,19 +159,20 @@ def update_matches(offer: Offers, session: sqlmodel.Session):
 
 
 def update_all_matches() -> None:
-    session = get_db_session()
+    with get_db_session() as session:
+        logging.warning("Updating matches")
 
-    for offer in session.exec(
-        select(Offers).where(
-            ~select(Matches)
-            .where(Matches.offer_id == Offers.offer_id)
-            .where(
-                (Matches.status == MatchingStatus.MATCHED.value)
-                | (Matches.status == MatchingStatus.FINALIZED.value)
+        for offer in session.exec(
+            select(Offers).where(
+                ~select(Matches)
+                .where(Matches.offer_id == Offers.offer_id)
+                .where(
+                    (Matches.status == MatchingStatus.MATCHED.value)
+                    | (Matches.status == MatchingStatus.FINALIZED.value)
+                )
+                .exists()
             )
-            .exists()
-        )
-    ).all():
-        update_matches(offer, session)
-    for user in session.exec(select(Users)).all():
-        push_notifications(user)
+        ).all():
+            update_matches(offer, session)
+        for user in session.exec(select(Users)).all():
+            push_notifications(user)

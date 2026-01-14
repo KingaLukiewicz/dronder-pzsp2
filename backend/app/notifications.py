@@ -7,7 +7,7 @@ from flask import request
 from app import app
 from app.models import Users
 
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins="*")
 
 connected_users: Counter[int] = Counter()
 

@@ -54,11 +54,35 @@ def parse_parameters(params: list[OfferParameter]) -> list[ParameterForm]:
 
 def parse_offer(offer: Offer) -> OfferForm:
     status = "new"
+    operator_id: int | None = None
+    operator_name: str | None = None
 
-    if any(match.status == MatchingStatus.FINALIZED.value for match in offer.Matches):
+    if (
+        len(
+            matches := [
+                match
+                for match in offer.Matches
+                if match.status == MatchingStatus.FINALIZED.value
+            ]
+        )
+        != 0
+    ):
         status = "finalized"
-    elif any(match.status == MatchingStatus.MATCHED.value for match in offer.Matches):
+        operator_id = matches[0].operator_id
+        operator_name = matches[0].operator.username  # type: ignore
+    elif (
+        len(
+            matches := [
+                match
+                for match in offer.Matches
+                if match.status == MatchingStatus.MATCHED.value
+            ]
+        )
+        != 0
+    ):
         status = "matched"
+        operator_id = matches[0].operator_id
+        operator_name = matches[0].operator.username  # type: ignore
 
     return OfferForm.model_validate(
         {
@@ -73,6 +97,8 @@ def parse_offer(offer: Offer) -> OfferForm:
             "format": offer.format,
             "parameters": parse_parameters(offer.Offer_Parameters),
             "status": status,
+            "operator_id": operator_id,
+            "operator_name": operator_name,
         }
     )
 
@@ -110,7 +136,9 @@ def post_offer():
         except ValidationError as e:
             return e.json(include_input=False), HTTPStatus.BAD_REQUEST
 
-        offer_data.location_id = insert_location(session, offer_data.location).location_id
+        offer_data.location_id = insert_location(
+            session, offer_data.location
+        ).location_id
         offer_data.client_id = user_id
         offer = Offer.model_validate(offer_data.model_dump())
 
@@ -239,6 +267,4 @@ def get_parameters_types(offer_type: str | None = None):
                 )
             ).all()
             logging.warning(list(parameters))
-            return jsonify(
-                list(parameters)
-            ), HTTPStatus.OK
+            return jsonify(list(parameters)), HTTPStatus.OK

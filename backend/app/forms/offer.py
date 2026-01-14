@@ -46,6 +46,9 @@ class OfferForm(BaseModel):
     parameters: list[ParameterForm] | None = None
     status: str = "new"
 
+    operator_id: int | None = None
+    operator_name: str | None = None
+
     @field_validator("deadline_date", "flight_date", mode="before")
     @classmethod
     def parse_http_date(cls, v: Any):
