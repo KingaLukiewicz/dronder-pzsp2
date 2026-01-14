@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
+import { setupSocket } from "../socket";
 
 export default function Log() {
   const [email, setEmail] = useState("");
@@ -36,6 +37,7 @@ export default function Log() {
       }
       const data: Token = await res.json();
       sessionStorage.setItem("token", data.access_token);
+      setupSocket(data.access_token);
 
       router.push("/profile");
     } catch (err: unknown) {

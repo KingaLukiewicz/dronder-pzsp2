@@ -31,12 +31,11 @@ _ = JWTManager(app)  # type: ignore
 
 with app.app_context():
     init_db()
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
 
-if __name__ == "__main__":
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(update_all_matches, "interval", minutes=1)  # pyright: ignore[reportUnknownMemberType]
-    scheduler.start()  # pyright: ignore[reportUnknownMemberType]
+scheduler = BackgroundScheduler()
+scheduler.add_job(update_all_matches, "interval", seconds=15)  # pyright: ignore[reportUnknownMemberType]
+scheduler.start()  # pyright: ignore[reportUnknownMemberType]
 
 
 @app.route("/")
