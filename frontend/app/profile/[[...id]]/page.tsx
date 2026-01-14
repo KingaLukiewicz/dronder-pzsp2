@@ -178,18 +178,14 @@ export default function Profile() {
                   userData.products.length > 0 && (
                     <>
                       <h3>Oferowane produkty</h3>
-                      <ul>
-                        {userData.products.map((product, index) => (
-                          <li key={index}>{product}</li>
-                        ))}
-                      </ul>
+                      <p>{userData.products.join(', ')}</p>
                     </>
                   )}
 
                 {userData.role === "operator" && weekdays && (
                   <>
                     <h3>Dostępność czasowa</h3>
-                    <ul className={styles.WeekdaysList}>
+                    <p className={styles.WeekdaysList}>
                       {[
                         "Poniedziałek",
                         "Wtorek",
@@ -198,12 +194,10 @@ export default function Profile() {
                         "Piątek",
                         "Sobota",
                         "Niedziela",
-                      ].map((day) => (
-                        <li key={day}>
-                          {day}: {weekdays[day] ? "Dostępny" : "Niedostępny"}
-                        </li>
-                      ))}
-                    </ul>
+                      ]
+                        .filter(day => weekdays[day])
+                        .join(', ')}
+                    </p>
                   </>
                 )}
                 {userData.reviews && (
