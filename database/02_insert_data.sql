@@ -174,9 +174,9 @@ VALUES
     'geotiff',
     '2024-09-08',
     5,
-    'Klient bardzo dobrze przygotowany, sprawna komunikacja.',
+    'Bardzo dokładna ortofotomapa, szybka realizacja.',
     5,
-    'Bardzo dokładna ortofotomapa, szybka realizacja.'
+    'Klient bardzo dobrze przygotowany, sprawna komunikacja.'
 ),
 (
     4,
@@ -189,9 +189,9 @@ VALUES
     'obj',
     '2024-08-14',
     4,
-    'Niewielkie zmiany w trakcie realizacji, ale współpraca OK.',
+    'Dobry model, drobne poprawki wykonane szybko.',
     4,
-    'Dobry model, drobne poprawki wykonane szybko.'
+    'Niewielkie zmiany w trakcie realizacji, ale współpraca OK.'
 ),
 (
     2,
@@ -204,9 +204,9 @@ VALUES
     'laz',
     '2024-09-27',
     5,
-    'Jasne wymagania techniczne, bardzo dobra współpraca.',
+    'Gęsta i dobrze sklasyfikowana chmura punktów.',
     5,
-    'Gęsta i dobrze sklasyfikowana chmura punktów.'
+    'Jasne wymagania techniczne, bardzo dobra współpraca.'
 ),
 (
     6,
@@ -218,10 +218,10 @@ VALUES
     'zakończone',
     'ply',
     '2024-11-02',
-    4,
-    'Trudne warunki terenowe, ale klient elastyczny.',
     5,
-    'Profesjonalne podejście, świetna jakość danych.'
+    'Profesjonalne podejście, świetna jakość danych.',
+    4,
+    'Trudne warunki terenowe, ale klient elastyczny.'
 ),
 (
     2,
@@ -233,25 +233,25 @@ VALUES
     'zakończone',
     'geotiff',
     '2024-11-22',
-    5,
-    'Dokumentacja kompletna, brak problemów.',
     4,
-    'Model zgodny z wymaganiami, dobry kontakt.'
+    'Model zgodny z wymaganiami, dobry kontakt.',
+    5,
+    'Dokumentacja kompletna, brak problemów.'
 ),
 (
     2,
     2,
     NULL,
-    'Model mesh 3D',
+    'Modele mesh 3D',
     'Chcę otrzymać dokładny i realistyczny model 3D obiektu lub terenu, stworzony na podstawie zdjęć z drona. Model powinien odzwierciedlać rzeczywiste wymiary i kształty, mieć czystą i poprawną siatkę (mesh) oraz, jeśli to możliwe, być pokryty realistyczną teksturą z fotografii.',
     '2024-12-04',
     'zakończone',
     'ply',
     '2024-12-01',
-    5,
-    'Dobry kontakt, przystępny do wprowadzenia poprawek.',
     4,
-    'Dobry kontakt.'
+    'Dobry kontakt, przystępny do wprowadzenia poprawek.',
+    5,
+    'Dobry kontakt'
 );
 
 
@@ -281,7 +281,7 @@ INSERT INTO public."Matches" (operator_id, offer_id, status) VALUES
 (5, 3, 'matched'),
 (6, 4, 'finalized'),
 (1, 5, 'finalized'),
-(1, 6, 'finalized'),
+(4, 6, 'finalized'),
 (1, 7, 'matched'),
 (1, 8, 'finalized'),
 (1, 9, 'matched'),
