@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "apexcharts": "^5.3.6",
+    "date-fns": "^4.1.0",
+    "react-apexcharts": "^1.9.0",
+    "react-big-calendar": "^1.19.4",
+    "recharts": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/react-big-calendar": "^1.16.3"
+  }
+}

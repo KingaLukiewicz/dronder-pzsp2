@@ -1,6 +1,7 @@
 .Profile {
   margin-top: 15vh;
   color: black;
+  overflow-y: scroll;
 }
 
 .Profile h1 {
@@ -14,13 +15,20 @@
   margin-top: 2vh;
 }
 
+.Profile h3 {
+  font-size: clamp(1rem, 1.25vw, 3rem);
+  font-weight: bold;
+  margin-top: 1vh;
+}
+
 .InfoContainer {
+  position: relative;
   margin-top: 2vh;
   background-color: #93d9e6;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
     -5px -5px 10px rgba(0, 0, 0, 0.05);
   border-radius: 20px;
-  height: 30vh;
+  height: 40vh;
   width: 90%;
   overflow: auto;
   font-size: clamp(1rem, 1.2vw, 3rem);
@@ -73,8 +81,16 @@
   margin-top: 2vh;
   width: 90%;
   gap: 10px;
+  margin-bottom: 3vh;
 }
 
+.EditIcon {
+  position: absolute;
+  top: 3vh;
+  right: 3vh;
+  cursor: pointer;
+  z-index: 1000;
+}
 .Select {
   background-color: #168aad;
   border: 1px solid #127390;

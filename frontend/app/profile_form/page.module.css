@@ -2,10 +2,11 @@
   background-color: #1e7c8e;
   border-radius: 50px;
   margin-top: 5vh;
-  height: 90vh;
+  min-height: 90vh;
   margin-left: 15vw;
   width: 70vw;
   color: white;
+  overflow-y: scroll;
 }
 
 .Form h1 {
@@ -48,6 +49,17 @@
   width: 80%;
 }
 
+.InputLong {
+  height: 4vh;
+  background-color: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding-left: 0.5vw;
+  width: 90%;
+}
+
 .LocationRow {
   display: flex;
   flex-direction: row;
@@ -74,6 +86,7 @@
   cursor: pointer;
   border-radius: 0px;
   width: 10vw;
+  bottom: 4vh;
 }
 
 .Button:hover {

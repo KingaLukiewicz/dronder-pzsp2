@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { redirect } from "next/navigation";
 import { setupSocket } from "../socket";
+import { BASE_URL } from "../constants";
 
 export default function Log() {
   const [email, setEmail] = useState("");
@@ -20,11 +21,10 @@ export default function Log() {
   }
 
   const handleLogin = async () => {
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/login", {
-        // replace with "http://backend:5000/auth/login" when running on docker
+      const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ export default function Log() {
             src="/dronder_logo.png"
             alt="App logo"
             fill
-            style={{ objectFit: "contain" }} // or "cover"
+            style={{ objectFit: "contain" }}
           />
         </div>
         <TextField

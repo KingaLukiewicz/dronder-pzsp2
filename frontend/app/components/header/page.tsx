@@ -6,8 +6,11 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
 import { Badge } from "@mui/material";
+import { useRouter } from "next/navigation";
 
-const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+const Header = ({ toggleSidebar }: HeaderProps) => {
+  const router = useRouter();
+
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
@@ -22,6 +25,12 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
     };
 
   }, []);
+
+
+  const handleLogOut = async () => {
+    sessionStorage.removeItem("token");
+    router.push("/login");
+  };
 
   return (
     <div className={styles.Header}>
@@ -44,7 +53,9 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         <Badge badgeContent={notificationCount} color="primary">
           <NotificationsNoneOutlinedIcon sx={{ fontSize: "4vh" }} />
         </Badge>
-        <LogoutOutlinedIcon sx={{ fontSize: "4vh" }} />
+        <div onClick={handleLogOut} style={{ cursor: "pointer" }}>
+          <LogoutOutlinedIcon sx={{ fontSize: "4vh" }} />
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,50 @@
+.MatchedInfo {
+  height: 30vh;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  background-color: #93d9e6;
+  margin-right: 4vw;
+  border-radius: 8px;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+.TitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.TitleRow h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.Actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.Description {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
+}
+
+.StarRating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.Rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}

@@ -33,9 +33,28 @@ export type OfferPost = {
   flight_date?: string;
   deadline_date: string;
   location: Loc;
-  format: string;
   parameters?: Array<Parameter>;
   status?: string;
+};
+
+export type ParameterForm = {
+  name: string;
+  value: string;
+};
+
+export type OfferForm = {
+  description: string;
+  offer_type: string;
+  deadline_date: Date;
+  location: Loc;
+  offer_id: number;
+  client_id: number;
+  client_name: string;
+  flight_date?: Date;
+  location_id: number;
+  format: string;
+  parameters: ParameterForm[];
+  status: string;
 };
 
 export type ReviewPost = {
@@ -57,7 +76,12 @@ export type UserdataGet = {
   description: string;
   role: string;
   location: Loc;
-  reviews:  Review[];
+  phone_number: string;
+  email: string;
+  reviews: Review[];
+  products: string[];
+  user_id: number;
+  offer_id?: number;
 };
 
 export type UserdataPost = {
@@ -65,6 +89,7 @@ export type UserdataPost = {
   description?: string;
   role?: string;
   location?: Loc;
+  products?: string[];
 };
 
 export type Register = {

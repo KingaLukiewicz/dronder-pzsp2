@@ -1,0 +1,42 @@
+.MyOrders {
+  margin-top: 15vh;
+  color: black;
+}
+
+.MyOrders h1 {
+  font-size: clamp(1rem, 2.5vw, 3rem);
+  font-weight: bold;
+  margin-bottom: 2vh;
+}
+
+.OrderList {
+  max-height: 30vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding-right: 0.5rem;
+}
+
+.OrderList > * {
+  flex-shrink: 0;
+}
+
+.AddOrder {
+  position: fixed;
+  bottom: 5vh;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.AddOrder:hover {
+  transform: translateY(-2px);
+}
