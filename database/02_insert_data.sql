@@ -80,11 +80,11 @@ INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VA
 (18.6466, 54.3520, 60, NULL),                                   -- Gdańsk service area
 (NULL, NULL, NULL, 'ul. Grunwaldzka 101, 80-244 Gdańsk, Polska');
 
-
+INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES
+('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 'Z dronami pracuję od 10 lat. Posiadam 7 różnych certyfikatów i uprawnień, pozwalająće mi wykonywać wiele typów zleceń. Jestem w stanie pracować w różnych warunkach, z różymi klientami.','123456789', 1, 2),
+('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 'Często potrzebuję uzyskiwać pomiary za pomocą dronów w mojej pracy, dlatego często wystawiam oferty. Lubię mieć stałych wykonawców, jeśli jestem zadowolona z wykonanej przez nich pracy.', '127654321', Null, 3);
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
-('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', '123456789', 1, 2),
-('marek_lewandowski@gmail.com', 'marek_admin', 'admin1234', '123456789', NULL, 1),
-('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', '127654321', Null, 3);
+('marek_lewandowski@gmail.com', 'marek_admin', 'admin1234', '123456789', NULL, 1);
 INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES
 ('adam_kowalczyk@gmail.com', 'adam_drontech', 'haslo123', 'Operator UAV z 5-letnim doświadczeniem', '555111222', 3, 2),
 ('ewa_nowak@gmail.com', 'ewa_inwestor', 'bezpiecznehaslo', 'Inwestor nieruchomości', '555333444', 4, 3),
@@ -119,7 +119,7 @@ INSERT INTO public."Available_Weekdays" (weekday, operator_id) VALUES
 INSERT INTO public."Offers" (location_id, client_id, match_id, offer_type, description, deadline_date, status, format, flight_date)
 VALUES(
     2,                                                                                                  -- location_id
-    1,                                                                                                  -- client_id
+    5,                                                                                                  -- client_id
     NULL,                                                                                               -- match_id
     'Ortofotomapa',                                                                                     -- offer_type
     'Zlecenie wykonania zdjęć lotniczych dla nieruchomości.',                                           -- description
@@ -130,7 +130,7 @@ VALUES(
 ),
 (
     4,
-    2,
+    5,
     NULL,
     'Chmura punktów',
     'Chmura punktów dla terenu inwestycyjnego 4 ha.',
@@ -141,7 +141,7 @@ VALUES(
 ),
 (
     6,
-    4,
+    2,
     NULL,
     'Skaning laserowy',
     'Skaning laserowy elewacji zabytkowego budynku.',
@@ -174,9 +174,9 @@ VALUES
     'geotiff',
     '2024-09-08',
     5,
-    'Klient bardzo dobrze przygotowany, sprawna komunikacja.',
+    'Bardzo dokładna ortofotomapa, szybka realizacja.',
     5,
-    'Bardzo dokładna ortofotomapa, szybka realizacja.'
+    'Klient bardzo dobrze przygotowany, sprawna komunikacja.'
 ),
 (
     4,
@@ -189,9 +189,9 @@ VALUES
     'obj',
     '2024-08-14',
     4,
-    'Niewielkie zmiany w trakcie realizacji, ale współpraca OK.',
+    'Dobry model, drobne poprawki wykonane szybko.',
     4,
-    'Dobry model, drobne poprawki wykonane szybko.'
+    'Niewielkie zmiany w trakcie realizacji, ale współpraca OK.'
 ),
 (
     2,
@@ -204,9 +204,9 @@ VALUES
     'laz',
     '2024-09-27',
     5,
-    'Jasne wymagania techniczne, bardzo dobra współpraca.',
+    'Gęsta i dobrze sklasyfikowana chmura punktów.',
     5,
-    'Gęsta i dobrze sklasyfikowana chmura punktów.'
+    'Jasne wymagania techniczne, bardzo dobra współpraca.'
 ),
 (
     6,
@@ -218,10 +218,10 @@ VALUES
     'zakończone',
     'ply',
     '2024-11-02',
-    4,
-    'Trudne warunki terenowe, ale klient elastyczny.',
     5,
-    'Profesjonalne podejście, świetna jakość danych.'
+    'Profesjonalne podejście, świetna jakość danych.',
+    4,
+    'Trudne warunki terenowe, ale klient elastyczny.'
 ),
 (
     2,
@@ -233,10 +233,25 @@ VALUES
     'zakończone',
     'geotiff',
     '2024-11-22',
-    5,
-    'Dokumentacja kompletna, brak problemów.',
     4,
-    'Model zgodny z wymaganiami, dobry kontakt.'
+    'Model zgodny z wymaganiami, dobry kontakt.',
+    5,
+    'Dokumentacja kompletna, brak problemów.'
+),
+(
+    2,
+    2,
+    NULL,
+    'Modele mesh 3D',
+    'Chcę otrzymać dokładny i realistyczny model 3D obiektu lub terenu, stworzony na podstawie zdjęć z drona. Model powinien odzwierciedlać rzeczywiste wymiary i kształty, mieć czystą i poprawną siatkę (mesh) oraz, jeśli to możliwe, być pokryty realistyczną teksturą z fotografii.',
+    '2024-12-04',
+    'zakończone',
+    'ply',
+    '2024-12-01',
+    4,
+    'Dobry kontakt, przystępny do wprowadzenia poprawek.',
+    5,
+    'Dobry kontakt'
 );
 
 
@@ -266,10 +281,11 @@ INSERT INTO public."Matches" (operator_id, offer_id, status) VALUES
 (5, 3, 'matched'),
 (6, 4, 'finalized'),
 (1, 5, 'finalized'),
-(1, 6, 'finalized'),
-(1, 7, 'finalized'),
+(4, 6, 'finalized'),
+(1, 7, 'matched'),
 (1, 8, 'finalized'),
-(1, 9, 'finalized');
+(1, 9, 'matched'),
+(1, 10, 'pending');
 
 INSERT INTO public."Operator_Products" (operator_id, offer_type_name) VALUES
 (1, 'Ortofotomapa'),

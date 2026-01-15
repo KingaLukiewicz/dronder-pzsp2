@@ -164,6 +164,9 @@ export default function Profile() {
               <div className={styles.Info}>
                 <h2>{userData.username}</h2>
                 <p>{userData.description}</p>
+                <h3>Dane kontaktowe:</h3>
+                <p>Adres e-mail: {userData.email}</p>
+                <p>Numer telefonu: {userData.phone_number}</p>
                 {userData.role === "operator" && userData.location && (
                   <>
                     <h3>Lokalizacja</h3>
@@ -175,18 +178,14 @@ export default function Profile() {
                   userData.products.length > 0 && (
                     <>
                       <h3>Oferowane produkty</h3>
-                      <ul>
-                        {userData.products.map((product, index) => (
-                          <li key={index}>{product}</li>
-                        ))}
-                      </ul>
+                      <p>{userData.products.join(', ')}</p>
                     </>
                   )}
 
                 {userData.role === "operator" && weekdays && (
                   <>
                     <h3>Dostępność czasowa</h3>
-                    <ul className={styles.WeekdaysList}>
+                    <p className={styles.WeekdaysList}>
                       {[
                         "Poniedziałek",
                         "Wtorek",
@@ -195,12 +194,10 @@ export default function Profile() {
                         "Piątek",
                         "Sobota",
                         "Niedziela",
-                      ].map((day) => (
-                        <li key={day}>
-                          {day}: {weekdays[day] ? "Dostępny" : "Niedostępny"}
-                        </li>
-                      ))}
-                    </ul>
+                      ]
+                        .filter(day => weekdays[day])
+                        .join(', ')}
+                    </p>
                   </>
                 )}
                 {userData.reviews && (
@@ -228,8 +225,8 @@ export default function Profile() {
                               totalReviews % 100 >= 12 &&
                               totalReviews % 100 <= 14
                             )
-                          ? "oceny"
-                          : "ocen"}
+                            ? "oceny"
+                            : "ocen"}
                       </p>
                     </div>
                   </>

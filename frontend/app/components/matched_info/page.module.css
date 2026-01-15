@@ -1,5 +1,7 @@
 .MatchedInfo {
-  height: 30vh;
+  min-height: 15vh;
+  height: auto;
+  max-height: 30vh;
   width: 90%;
   display: flex;
   flex-direction: column;

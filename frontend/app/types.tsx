@@ -55,6 +55,8 @@ export type OfferForm = {
   format: string;
   parameters: ParameterForm[];
   status: string;
+  operator_id: number,
+  operator_name: string,
 };
 
 export type ReviewPost = {

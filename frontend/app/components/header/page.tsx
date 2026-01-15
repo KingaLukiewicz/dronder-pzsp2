@@ -4,9 +4,13 @@ import Image from "next/image";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useEffect, useState } from "react";
-import { socket } from "../socket";
+import { socket } from "../../socket";
 import { Badge } from "@mui/material";
 import { useRouter } from "next/navigation";
+
+interface HeaderProps {
+  toggleSidebar?: () => void;
+}
 
 const Header = ({ toggleSidebar }: HeaderProps) => {
   const router = useRouter();

@@ -228,46 +228,48 @@ export default function Matched() {
       {sidebarVisible && <Sidebar />}
       <main style={{ marginLeft: sidebarVisible ? "27vw" : "7vw" }}>
         <h1>Dopasowania</h1>
-        {offers.length == 0 ? (
-          <p>Nie masz aktualnie zadnych dopasowań.</p>
-        ) : (
-          <>
-            {role === "operator" &&
-              offers.map((offer) => (
+        <div className={styles.Matches}>
+          {offers.length == 0 ? (
+            <p>Nie masz aktualnie zadnych dopasowań.</p>
+          ) : (
+            <>
+              {role === "operator" &&
+                offers.map((offer) => (
+                  <MatchedInfo
+                    key={offer.offer_id}
+                    user_id={offer.client_id}
+                    title={`${offer.client_name} : ${offer.offer_type}`}
+                    description={offer.description}
+                    onClick={() => handleOfferDetails(offer.offer_id)}
+                    handleAccept={() => handleAcceptOffer(offer.offer_id)}
+                    handleReject={() => handleRejectOffer(offer.offer_id)}
+                  />
+                ))}
+              {operators.map((operator) => (
                 <MatchedInfo
-                  key={offer.offer_id}
-                  user_id={offer.client_id}
-                  title={`${offer.client_name} : ${offer.offer_type}`}
-                  description={offer.description}
-                  onClick={() => handleOfferDetails(offer.offer_id)}
-                  handleAccept={() => handleAcceptOffer(offer.offer_id)}
-                  handleReject={() => handleRejectOffer(offer.offer_id)}
-                />
+                  key={operator.user_id}
+                  user_id={operator.user_id}
+                  title={operator.username}
+                  description={operator.description}
+                  reviews={operator.reviews}
+                  onClick={() =>
+                    operator.offer_id && handleOfferDetails(operator.offer_id)
+                  }
+                  handleAccept={() =>
+                    operator.offer_id &&
+                    handleAcceptOperator(operator.offer_id, operator.user_id)
+                  }
+                  handleReject={() =>
+                    operator.offer_id &&
+                    handleRejectOperator(operator.offer_id, operator.user_id)
+                  }
+                >
+                  <MatchedInfo.Rating />
+                </MatchedInfo>
               ))}
-            {operators.map((operator) => (
-              <MatchedInfo
-                key={operator.user_id}
-                user_id={operator.user_id}
-                title={operator.username}
-                description={operator.description}
-                reviews={operator.reviews}
-                onClick={() =>
-                  operator.offer_id && handleOfferDetails(operator.offer_id)
-                }
-                handleAccept={() =>
-                  operator.offer_id &&
-                  handleAcceptOperator(operator.offer_id, operator.user_id)
-                }
-                handleReject={() =>
-                  operator.offer_id &&
-                  handleRejectOperator(operator.offer_id, operator.user_id)
-                }
-              >
-                <MatchedInfo.Rating />
-              </MatchedInfo>
-            ))}
-          </>
-        )}
+            </>
+          )}
+        </div>
       </main>
     </div>
   );
