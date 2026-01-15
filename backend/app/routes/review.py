@@ -44,11 +44,11 @@ def post_review():
         ).one_or_none()
 
         if offer.client_id == user_id:
-            offer.operator_rating = review.rating
-            offer.operator_review = review.review
-        elif operator_id == user_id:
             offer.client_rating = review.rating
             offer.client_review = review.review
+        elif operator_id == user_id:
+            offer.operator_rating = review.rating
+            offer.operator_review = review.review
         else:
             return "", HTTPStatus.BAD_REQUEST
 

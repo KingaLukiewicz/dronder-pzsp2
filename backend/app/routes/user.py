@@ -87,7 +87,10 @@ def get_userdata(user_id: int | None = None):
                         Offer.client_review,
                         Offer.client_rating,
                     )
-                    .where(Offer.client_id == user_id)
+                    .select_from(User)
+                    .join(Matches)
+                    .join(Offer)
+                    .where(Matches.operator_id == user_id)
                     .where(
                         (Offer.client_rating != None) | (Offer.client_review != None)  # noqa: E711
                     )
@@ -112,9 +115,9 @@ def get_userdata(user_id: int | None = None):
                     .select_from(User)
                     .join(Matches)
                     .join(Offer)
-                    .where(User.user_id == user_id)
+                    .where(Offer.client_id == user_id)
                     .where(
-                        (Offer.operator_rating != None)
+                        (Offer.operator_rating != None)  # noqa: E711
                         | (Offer.operator_review != None)  # noqa: E711
                     )
                     .distinct(Offer.offer_id)  # type: ignore
@@ -190,11 +193,14 @@ def post_userdata():
             for operator_product in session.exec(
                 select(OfferTypes.name).where(OfferTypes.name == product)
             ).all():
-                if session.exec(
-                    select(OperatorProducts)
-                    .where(OperatorProducts.operator_id == user_id)
-                    .where(OperatorProducts.offer_type_name == operator_product)
-                ).first() is None:
+                if (
+                    session.exec(
+                        select(OperatorProducts)
+                        .where(OperatorProducts.operator_id == user_id)
+                        .where(OperatorProducts.offer_type_name == operator_product)
+                    ).first()
+                    is None
+                ):
                     session.add(
                         OperatorProducts(
                             operator_id=user_id, offer_type_name=operator_product
