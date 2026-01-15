@@ -3,7 +3,7 @@ from enum import Enum
 import logging
 from typing import Final
 
-from backend.app.forms.user import WeekdayEnum
+from app.forms.user import WeekdayEnum
 import sqlmodel
 from app.db import get_db_session
 from app.models import (
