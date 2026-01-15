@@ -3,6 +3,7 @@ from enum import Enum
 import logging
 from typing import Final
 
+from backend.app.forms.user import WeekdayEnum
 import sqlmodel
 from app.db import get_db_session
 from app.models import (
@@ -91,19 +92,19 @@ def get_weekday_from_date(date: date) -> Weekdays:
 
     match date.weekday():
         case 0:
-            return find_weekday("Poniedziałek")
+            return find_weekday(WeekdayEnum.Poniedziałek)
         case 1:
-            return find_weekday("Wtorek")
+            return find_weekday(WeekdayEnum.Wtorek)
         case 2:
-            return find_weekday("Środa")
+            return find_weekday(WeekdayEnum.Środa)
         case 3:
-            return find_weekday("Czwartek")
+            return find_weekday(WeekdayEnum.Czwartek)
         case 4:
-            return find_weekday("Piątek")
+            return find_weekday(WeekdayEnum.Piątek)
         case 5:
-            return find_weekday("Sobota")
+            return find_weekday(WeekdayEnum.Sobota)
         case 6:
-            return find_weekday("Niedziela")
+            return find_weekday(WeekdayEnum.Niedziela)
         case _:
             raise ValueError
 
