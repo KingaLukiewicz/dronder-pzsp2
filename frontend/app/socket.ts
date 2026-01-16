@@ -10,7 +10,7 @@ export function setupSocket(token: string) {
   if (socket.connected)
     socket.disconnect();
 
-  // @ts-expect-error
+  // @ts-expect-error: socket gets `auth` as object not function
   socket.auth.token = token;
   socket.connect();
 }
