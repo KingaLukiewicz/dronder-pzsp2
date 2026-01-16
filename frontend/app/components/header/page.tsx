@@ -19,7 +19,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
 
   useEffect(() => {
     function onMatch(value: object) {
-      // @ts-ignore
+      // @ts-expect-error
       setNotificationCount(value.count);
     }
 
