@@ -11,6 +11,7 @@ export function setupSocket(token: string) {
     socket.disconnect();
 
   // @ts-expect-error
+  // Reason: socket gets `auth` as object not function
   socket.auth.token = token;
   socket.connect();
 }
