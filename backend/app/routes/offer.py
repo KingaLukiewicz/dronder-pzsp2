@@ -184,7 +184,7 @@ def get_ongoing_offers():
         stmt = (
             select(Offer)
             .join(Matches)
-            .where(Matches.operator_id == user_id or Offer.client_id == user_id)
+            .where(Matches.operator_id == user_id | Offer.client_id == user_id)
             .where(Matches.status == MatchingStatus.MATCHED.value)
         )
         offers = session.exec(stmt).all()
@@ -205,7 +205,7 @@ def get_finalized_offers():
         stmt = (
             select(Offer)
             .join(Matches)
-            .where(Matches.operator_id == user_id or Offer.client_id == user_id)
+            .where(Matches.operator_id == user_id | Offer.client_id == user_id)
             .where(Matches.status == MatchingStatus.FINALIZED.value)
         )
         offers = session.exec(stmt).all()
