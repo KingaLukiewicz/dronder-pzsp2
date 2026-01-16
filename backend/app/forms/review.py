@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, model_validator
 @dataclass
 class ReviewForm(BaseModel):
     offer_id: int | None = None
+    review_date: str | None = None
     rating: int | None = Field(None, ge=1, le=5)
     review: str | None = None
     reviewer: str | None = None

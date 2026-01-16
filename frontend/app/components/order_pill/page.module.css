@@ -11,14 +11,39 @@
   border-radius: 8px;
 }
 
-.Left,
-.Right {
+.Left {
   display: flex;
   flex-direction: row;
-  gap: 1vw;
+  align-items: center; /* wyrównanie pionowe */
+  gap: 1rem;
   font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  flex-wrap: wrap; /* jeśli tekst się rozciągnie, przejdzie do nowej linii */
+}
+
+.Right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
 .Left p:first-child {
   font-weight: 700;
+  margin: 0;
+}
+
+.Left p {
+  margin: 0;
+}
+
+.OrderPillButton {
+  border-color: black !important;
+  color: black !important;
+  border: 1px solid white;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: none;
+  transition: all 0.2s ease;
 }

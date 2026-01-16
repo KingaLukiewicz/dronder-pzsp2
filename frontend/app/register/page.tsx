@@ -4,10 +4,15 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import { FormControlLabel } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
+import { BASE_URL } from "../constants";
 
 export default function Register() {
+  const [isOperator, setIsOperator] = useState<boolean>(false);
+  const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
@@ -30,16 +35,16 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/auth/register", {
-        // podmienić 127.0.0.1:5000 na backend:5000 dla dockera
+      const res = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
           username,
-          phone_number,
+          email,
           password,
           re_password,
+          phone_number,
+          role,
         }),
       });
 
@@ -67,6 +72,15 @@ export default function Register() {
     redirect("/login");
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOperator(event.target.checked);
+    if (isOperator) {
+      setRole("operator");
+    } else {
+      setRole("user");
+    }
+  };
+
   return (
     <div className={styles.RegisterContainer}>
       <div className={styles.RightBox} />
@@ -79,6 +93,24 @@ export default function Register() {
             style={{ objectFit: "contain" }}
           />
         </div>
+        <div className={styles.Checkbox}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isOperator}
+                onChange={handleChange}
+                name="operator"
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#168aad",
+                  },
+                }}
+              />
+            }
+            label={"Zaznacz jeśli tworzysz konto jako operator"}
+          />
+        </div>
+
         <TextField
           className={styles.Input}
           label="nazwa użytkownika"
@@ -92,6 +124,7 @@ export default function Register() {
           variant="outlined"
           value={phone_number}
           onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="np. +48123456789"
         />
         <TextField
           className={styles.Input}

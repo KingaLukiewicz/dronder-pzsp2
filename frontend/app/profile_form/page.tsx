@@ -6,28 +6,148 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { UserdataPost } from "../types";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { UserdataGet } from "../types";
+import { BASE_URL } from "../constants";
 
 export default function ProfileForm() {
+  const [userData, setUserData] = useState<UserdataGet | null>(null);
+  const [role, setRole] = useState("");
+  const [userName, setUserName] = useState("");
   const [aboutMe, setAboutMe] = useState("");
   const [address, setAddress] = useState("");
   const [range, setRange] = useState("");
-  const [state, setState] = useState({
-    map: false,
-    nmp: false,
-    nmpt: false,
-    cloud: false,
-    mesh: false,
-    scanning: false,
-  });
+  const [offerTypes, setOfferTypes] = useState<string[]>([]);
+  const [selectedOffers, setSelectedOffers] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [weekdays, setWeekdays] = useState<Record<string, boolean>>({});
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch(`${BASE_URL}/user/data`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
+        const data: UserdataGet = await res.json();
+        setUserData(data);
+
+        setRole(data.role || "");
+        setUserName(data.username || "");
+        setAboutMe(data.description || "");
+        setAddress(data.location?.address || "");
+        setRange(data.location?.radius?.toString() || "");
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error("Brak tokena. Zaloguj się ponownie.");
+        }
+        const res = await fetch(`${BASE_URL}/offer/types`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data: string[] = await res.json();
+
+        setOfferTypes(data);
+      } catch (error) {
+        console.error("Failed to fetch", error);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  useEffect(() => {
+    if (userData && offerTypes.length > 0) {
+      const initialState: Record<string, boolean> = {};
+      offerTypes.forEach((o) => {
+        initialState[o] = userData.products?.includes(o) || false;
+      });
+      setSelectedOffers(initialState);
+    }
+  }, [userData, offerTypes]);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
+    setSelectedOffers({
+      ...selectedOffers,
       [event.target.name]: event.target.checked,
     });
   };
+
+  useEffect(() => {
+    const fetchWeekdays = async () => {
+      if (!userData?.user_id) return;
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
+
+        const res = await fetch(
+          `${BASE_URL}/user/weekdays/${userData?.user_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Backend returned non-JSON:", text);
+          throw new Error(`Błąd backendu: ${res.status}`);
+        }
+
+        const data: Record<string, boolean> = await res.json();
+
+        const orderedDays = [
+          "Poniedziałek",
+          "Wtorek",
+          "Środa",
+          "Czwartek",
+          "Piątek",
+          "Sobota",
+          "Niedziela",
+        ];
+        const initialWeekdays: Record<string, boolean> = {};
+        orderedDays.forEach((day) => {
+          initialWeekdays[day] = !!data[day];
+        });
+
+        setWeekdays(initialWeekdays);
+      } catch (err) {
+        console.error("Failed to fetch weekdays:", err);
+      }
+    };
+
+    if (role === "operator") fetchWeekdays();
+  }, [role, userData?.user_id]);
 
   const handleSubmit = async () => {
     try {
@@ -36,7 +156,12 @@ export default function ProfileForm() {
         throw new Error("Brak tokena. Zaloguj się ponownie.");
       }
 
+      const products = Object.keys(selectedOffers).filter(
+        (key) => selectedOffers[key]
+      );
+
       const payload: UserdataPost = {
+        username: userName || undefined,
         description: aboutMe || undefined,
         location:
           address || range
@@ -45,9 +170,10 @@ export default function ProfileForm() {
                 radius: range ? Number(range) : undefined,
               }
             : undefined,
+        products: products.length > 0 ? products : [],
       };
 
-      const res = await fetch("http://127.0.0.1:5001/user/data", {
+      const res = await fetch(`${BASE_URL}/user/data`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,8 +184,27 @@ export default function ProfileForm() {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Błąd podczas zapisu: ${text}`);
+        throw new Error(`Błąd podczas zapisu danych użytkownika: ${text}`);
       }
+
+      if (role === "operator") {
+        const weekdaysPayload = { weekdays };
+
+        const resWeekdays = await fetch(`${BASE_URL}/user/weekdays`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(weekdaysPayload),
+        });
+
+        if (!resWeekdays.ok) {
+          const text = await resWeekdays.text();
+          throw new Error(`Błąd podczas zapisu dostępności: ${text}`);
+        }
+      }
+
       router.push("/profile");
       alert("Profil został zaktualizowany!");
     } catch (err: unknown) {
@@ -72,11 +217,16 @@ export default function ProfileForm() {
     }
   };
 
-  const { map, nmp, nmpt, cloud, mesh, scanning } = state;
   return (
     <div className={styles.Form}>
       <h1>Uzupełnij swój profil</h1>
       <main className={styles.MainContent}>
+        <h2>Nazwa użytkownika</h2>
+        <input
+          className={styles.InputLong}
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
         <h2>O mnie</h2>
         <textarea
           className={styles.AboutMe}
@@ -85,124 +235,85 @@ export default function ProfileForm() {
           value={aboutMe}
           onChange={(e) => setAboutMe(e.target.value)}
         />
-        <h2>Oferowane produkty</h2>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={map}
-                onChange={handleChange}
-                name="map"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
+        {role == "operator" && (
+          <>
+            <h2>Oferowane produkty</h2>
+            <FormGroup>
+              {offerTypes.map((offer) => (
+                <FormControlLabel
+                  key={offer}
+                  control={
+                    <Checkbox
+                      checked={selectedOffers[offer] || false}
+                      onChange={handleChange}
+                      name={offer}
+                      sx={{
+                        color: "#ffffff",
+                        "&.Mui-checked": {
+                          color: "#ffffff",
+                        },
+                      }}
+                    />
+                  }
+                  label={offer}
+                />
+              ))}
+            </FormGroup>
+            <h2>Lokalizacja</h2>
+            <div className={styles.LocationRow}>
+              <label htmlFor="address">Adres:</label>
+              <input
+                className={styles.Input}
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
-            }
-            label="Ortofotomapy"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={nmp}
-                onChange={handleChange}
-                name="nmp"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
+            </div>
+            <div className={styles.LocationRow}>
+              <label htmlFor="range">Zasięg (km):</label>
+              <input
+                className={styles.Input}
+                id="range"
+                value={range}
+                onChange={(e) => setRange(e.target.value)}
               />
-            }
-            label="Numeryczne Modele Terenu"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={nmpt}
-                onChange={handleChange}
-                name="nmpt"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Numeryczne Modele Pokrycia Terenu"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={cloud}
-                onChange={handleChange}
-                name="cloud"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Chmury Punktów"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={mesh}
-                onChange={handleChange}
-                name="mesh"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Modele Mesh 3D"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={scanning}
-                onChange={handleChange}
-                name="scanning"
-                sx={{
-                  color: "#ffffff",
-                  "&.Mui-checked": {
-                    color: "#ffffff",
-                  },
-                }}
-              />
-            }
-            label="Scanning Laserowy"
-          />
-        </FormGroup>
-        <h2>Lokalizacja</h2>
-        <div className={styles.LocationRow}>
-          <label htmlFor="address">Adres:</label>
-          <input
-            className={styles.Input}
-            id="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <div className={styles.LocationRow}>
-          <label htmlFor="range">Zasięg (km):</label>
-          <input
-            className={styles.Input}
-            id="range"
-            value={range}
-            onChange={(e) => setRange(e.target.value)}
-          />
-        </div>
+            </div>
+            <h2>Dostępność czasowa</h2>
+            <FormGroup>
+              {[
+                "Poniedziałek",
+                "Wtorek",
+                "Środa",
+                "Czwartek",
+                "Piątek",
+                "Sobota",
+                "Niedziela",
+              ].map((day) => (
+                <FormControlLabel
+                  key={day}
+                  control={
+                    <Checkbox
+                      checked={weekdays[day] || false}
+                      onChange={(e) =>
+                        setWeekdays((prev) => ({
+                          ...prev,
+                          [day]: e.target.checked,
+                        }))
+                      }
+                      name={day}
+                      sx={{
+                        color: "#ffffff",
+                        "&.Mui-checked": { color: "#ffffff" },
+                      }}
+                    />
+                  }
+                  label={day}
+                />
+              ))}
+            </FormGroup>
+          </>
+        )}
+
         <div className={styles.ButtonRow}>
           <Button
             className={styles.Button}
