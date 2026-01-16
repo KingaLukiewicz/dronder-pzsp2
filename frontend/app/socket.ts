@@ -10,7 +10,7 @@ export function setupSocket(token: string) {
   if (socket.connected)
     socket.disconnect();
 
-  // @ts-ignore
+  // @ts-expect-error
   socket.auth.token = token;
   socket.connect();
 }
