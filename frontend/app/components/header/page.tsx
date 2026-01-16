@@ -19,7 +19,7 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
 
   useEffect(() => {
     function onMatch(value: object) {
-      // @ts-expect-error
+      // @ts-expect-error: depending on backend
       setNotificationCount(value.count);
     }
 

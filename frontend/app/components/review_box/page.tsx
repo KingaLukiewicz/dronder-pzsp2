@@ -1,7 +1,7 @@
 "use client";
 
 import { Rating, Tooltip } from "@mui/material";
-import { Review } from "../types";
+import { Review } from "../../types";
 import styles from "./page.module.css";
 
 type ReviewBoxProps = {
@@ -25,6 +25,14 @@ const ReviewBox = ({ review }: ReviewBoxProps) => {
             />
           </span>
         </Tooltip>
+        <p>{review.review_date
+          ? new Date(review.review_date).toLocaleString("pl-PL", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          : ""}
+        </p>
       </div>
 
       <div className={styles.Content}>
