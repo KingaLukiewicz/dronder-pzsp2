@@ -147,7 +147,7 @@ export default function CreateOrderForm() {
     <div className={styles.Form}>
       <h1>Utwórz zlecenie</h1>
       <main className={styles.MainContent}>
-        <h2>Opis zelecenia</h2>
+        <h2>Opis zlecenia</h2>
         <textarea
           className={styles.Description}
           id="description"
