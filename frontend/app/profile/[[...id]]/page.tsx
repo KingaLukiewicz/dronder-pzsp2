@@ -83,12 +83,15 @@ export default function Profile() {
           throw new Error(`Błąd backendu: ${res.status}`);
         }
         const data: UserdataGet = await res.json();
-        sessionStorage.setItem("role", data.role);
-        if (data.role === "admin") {
-          router.push("/admin");
+        if (!userId) {
+          sessionStorage.setItem("role", data.role);
+          if (data.role === "admin") {
+            router.push("/admin");
+          }
+          sessionStorage.setItem("email", data.email);
+          sessionStorage.setItem("id", `${data.user_id}`);
         }
-        sessionStorage.setItem("email", data.email);
-        sessionStorage.setItem("id", `${data.user_id}`);
+
         setUserData(data);
       } catch (error) {
         console.error("Failed to fetch", error);
