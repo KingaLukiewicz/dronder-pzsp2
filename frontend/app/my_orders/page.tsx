@@ -20,6 +20,12 @@ export default function MyOrders() {
   const [ongoing, setOngoing] = useState<OfferForm[]>([]);
   const [finalized, setFinalized] = useState<OfferForm[]>([]);
   const router = useRouter();
+  const [userId, setUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const idStr = sessionStorage.getItem("id");
+    if (idStr) setUserId(Number(idStr));
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -113,7 +119,7 @@ export default function MyOrders() {
                           : "Brak terminu"
                       }
                     >
-                      <OrderPill.Status />
+                      {offer.operator_id == userId && <OrderPill.Status />}
                     </OrderPill>
                   ))}
                 </div>
