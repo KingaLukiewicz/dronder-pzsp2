@@ -149,7 +149,9 @@ export default function MyOrders() {
                           ? new Date(offer.deadline_date).toLocaleDateString()
                           : "Brak terminu"
                       }
-                    />
+                    >
+                      <OrderPill.Rate />
+                    </OrderPill>
                   ))}
                 </div>
               ) : (
