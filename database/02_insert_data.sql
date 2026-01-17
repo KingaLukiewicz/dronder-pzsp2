@@ -81,15 +81,15 @@ INSERT INTO public."Locations" (geo_longitude, geo_latitude, radius, address) VA
 (NULL, NULL, NULL, 'ul. Grunwaldzka 101, 80-244 Gdańsk, Polska');
 
 INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES
-('marian_maleczko@gmail.com', 'marian_super_oprator', 'drony4life', 'Z dronami pracuję od 10 lat. Posiadam 7 różnych certyfikatów i uprawnień, pozwalająće mi wykonywać wiele typów zleceń. Jestem w stanie pracować w różnych warunkach, z różymi klientami.','123456789', 1, 2),
-('kasia_michalska@gmail.com', 'katarzyna_michalska', 'zlotarybka', 'Często potrzebuję uzyskiwać pomiary za pomocą dronów w mojej pracy, dlatego często wystawiam oferty. Lubię mieć stałych wykonawców, jeśli jestem zadowolona z wykonanej przez nich pracy.', '127654321', Null, 3);
+('marian_maleczko@gmail.com', 'marian_super_oprator', '$2b$12$t28WjJ7zwC9GFoJDXFlm2utMRfwPKUZJVcBTqQDXa/BYE0doKdW2u', 'Z dronami pracuję od 10 lat. Posiadam 7 różnych certyfikatów i uprawnień, pozwalająće mi wykonywać wiele typów zleceń. Jestem w stanie pracować w różnych warunkach, z różymi klientami.','123456789', 1, 2),
+('kasia_michalska@gmail.com', 'katarzyna_michalska', '$2b$12$FpXZr2xmsAyH7lMnl.TwIeObfaknfjT8yqu2xzc3.cFna9sedtzF.', 'Często potrzebuję uzyskiwać pomiary za pomocą dronów w mojej pracy, dlatego często wystawiam oferty. Lubię mieć stałych wykonawców, jeśli jestem zadowolona z wykonanej przez nich pracy.', '127654321', Null, 3);
 INSERT INTO public."Users" (email, username, password, phone_number, location_id, group_id) VALUES
-('marek_lewandowski@gmail.com', 'marek_admin', 'admin1234', '123456789', NULL, 1);
+('marek_lewandowski@gmail.com', 'marek_admin', '$2b$12$a8Gvb4p/SG2vGClwZlEREOgvsoRE2x4peM5g50n7cchWUCNraVLK.', '123456789', NULL, 1);
 INSERT INTO public."Users" (email, username, password, description, phone_number, location_id, group_id) VALUES
-('adam_kowalczyk@gmail.com', 'adam_drontech', 'haslo123', 'Operator UAV z 5-letnim doświadczeniem', '555111222', 3, 2),
-('ewa_nowak@gmail.com', 'ewa_inwestor', 'bezpiecznehaslo', 'Inwestor nieruchomości', '555333444', 4, 3),
-('piotr_zielinski@gmail.com', 'piotr_3d_scan', 'scanmaster', 'Specjalista od skaningu laserowego', '555666777', 5, 2),
-('magda_lewandowska@gmail.com', 'magda_geo', 'geo2025', 'Geodetka i operator UAV', '555888999', 6, 4);
+('adam_kowalczyk@gmail.com', 'adam_drontech', '$2b$12$Ma9fCy1DDt4w.hhcjtAL8./yC4Z90G74KzJ9l/cPdU2aJZ5jKey7C', 'Operator UAV z 5-letnim doświadczeniem', '555111222', 3, 2),
+('ewa_nowak@gmail.com', 'ewa_inwestor', '$2b$12$4N6kOhu8cNGiFrt8EGAQfOLU4fZ.AXpHVXg9MQNa6rCGpSfJ0S.cK', 'Inwestor nieruchomości', '555333444', 4, 3),
+('piotr_zielinski@gmail.com', 'piotr_3d_scan', '$2b$12$.po9bmY2tkiT3/DbdPDCzuAH/BlwruNfm2BeBJYKMgChTXgfqPp5a', 'Specjalista od skaningu laserowego', '555666777', 5, 2),
+('magda_lewandowska@gmail.com', 'magda_geo', '$2b$12$zoAEsJ7g/VJLKep114SkP.n0V9qqYABe5MJOSitAJI.qW8nNCTZzG', 'Geodetka i operator UAV', '555888999', 6, 4);
 
 
 INSERT INTO public."Available_Weekdays" (weekday, operator_id) VALUES
