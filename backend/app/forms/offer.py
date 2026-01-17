@@ -24,6 +24,28 @@ class LocationForm(BaseModel):
             "Location incomplete - provide either address or all of longitude and latitude and radius"
         )
 
+    @field_validator("geo_latitude")
+    @classmethod
+    def validate_latitude(cls, v: Decimal | None) -> Decimal | None:
+        if v is None or (-90 <= v <= 90):
+            return v
+        raise ValueError("Latitude must be between -90 and 90")
+
+    @field_validator("geo_longitude")
+    @classmethod
+    def validate_longitude(cls, v: Decimal | None) -> Decimal | None:
+        if v is None or (-180 <= v <= 180):
+            return v
+        raise ValueError("Longitude must be between -180 and 180")
+
+    @field_validator("radius")
+    @classmethod
+    def validate_radius(cls, v: int | None) -> int | None:
+        if v is None or v > 0:
+            return v
+        raise ValueError("Radius must be a positive integer")
+
+
 
 @dataclass
 class ParameterForm(BaseModel):
@@ -55,3 +77,11 @@ class OfferForm(BaseModel):
         if isinstance(v, str):
             return datetime.strptime(v, "%a, %d %b %Y %H:%M:%S GMT").date()
         return v
+
+    @model_validator(mode="after")
+    def date_order(self) -> Self:
+        if self.flight_date is None:
+            return self
+        if self.deadline_date < self.flight_date:
+            raise ValueError("Deadline date cannot be earlier than flight date.")
+        return self

@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from flask import Blueprint, Response, jsonify, request
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt  # type: ignore
 
 from flask_jwt_extended import create_access_token  # pyright: ignore[reportUnknownVariableType]
 from pydantic import ValidationError
