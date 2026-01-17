@@ -82,6 +82,6 @@ class OfferForm(BaseModel):
     def date_order(self) -> Self:
         if self.flight_date is None:
             return self
-        if self.deadline_date < self.flight_date:
+        if self.deadline_date <= self.flight_date:
             raise ValueError("Deadline date cannot be earlier than flight date.")
         return self
