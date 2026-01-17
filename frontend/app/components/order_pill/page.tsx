@@ -67,7 +67,7 @@ OrderPill.Status = function OrderPillStatus() {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
 
-      const res = await fetch(`${BASE_URL}/matches/finalized/${id}`, {
+      const res = await fetch(`${BASE_URL}/offer/finalized/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
