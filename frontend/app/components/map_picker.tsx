@@ -6,13 +6,13 @@ import "leaflet/dist/leaflet.css";
 
 type Props = {
   value: { lat: number; lng: number } | null;
-  onSelect: (pos: { lat: number; lng: number }) => void;
+  onSelect?: (pos: { lat: number; lng: number }) => void;
 };
 
 function LocationMarker({ onSelect }: { onSelect: Props["onSelect"] }) {
   useMapEvents({
     click(e) {
-      onSelect(e.latlng);
+      onSelect?.(e.latlng);
     },
   });
 
