@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 
 from flask import Blueprint, Response, jsonify, request
+from flask_bcrypt import Bcrypt  # type: ignore
 
 from flask_jwt_extended import create_access_token  # pyright: ignore[reportUnknownVariableType]
 from pydantic import ValidationError
@@ -15,7 +16,7 @@ from app.models import Users as User
 from app.routes.user import find_admin_group, find_operator_group, find_user_group
 
 bp: Blueprint = Blueprint("auth", __name__, url_prefix="/auth")
-
+bcrypt = Bcrypt()
 
 @bp.route("/register", methods=["POST"])
 def register_user():
@@ -47,6 +48,7 @@ def register_user():
         user.group = find_user_group(session)
         user.group_id = user.group.group_id  # type: ignore
 
+        user.password = bcrypt.generate_password_hash(user.password).decode('utf-8')
         session.add(user)
         session.commit()
         session.refresh(user)
@@ -88,7 +90,7 @@ def login_user():
     if user is None:
         return "User doen't exists", HTTPStatus.NOT_FOUND
 
-    if user.password != form.password:
+    if not bcrypt.check_password_hash(user.password, form.password):
         return "Invalid password", HTTPStatus.BAD_REQUEST
 
     access_token = create_access_token(identity=str(user.user_id))
