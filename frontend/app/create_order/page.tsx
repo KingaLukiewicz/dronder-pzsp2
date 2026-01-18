@@ -1,10 +1,15 @@
 "use client";
 import styles from "./page.module.css";
 import Button from "@mui/material/Button";
+import dynamic from "next/dynamic";
 import { OfferPost } from "../types";
 import { BASE_URL } from "../constants";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+const MapPicker = dynamic(() => import("../components/map_picker"), {
+  ssr: false,
+});
 
 export default function CreateOrderForm() {
   const [description, setDescription] = useState("");
@@ -22,7 +27,19 @@ export default function CreateOrderForm() {
   const [parameters, setParameters] = useState<
     { name: string; value: string }[]
   >([]);
+  const [mapOpen, setMapOpen] = useState(false);
+  const [mapPosition, setMapPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const router = useRouter();
+
+  const handleMapSelect = (pos: { lat: number; lng: number }) => {
+    setMapPosition(pos);
+    setLatitude(pos.lat.toFixed(6));
+    setLongitude(pos.lng.toFixed(6));
+    setMapOpen(false);
+  };
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -222,6 +239,7 @@ export default function CreateOrderForm() {
                 className={styles.Input}
                 id="latitude"
                 value={latitude}
+                onFocus={() => setMapOpen(true)}
                 onChange={(e) => setLatitude(e.target.value)}
               />
             </div>
@@ -233,6 +251,7 @@ export default function CreateOrderForm() {
                 className={styles.Input}
                 id="longitude"
                 value={longitude}
+                onFocus={() => setMapOpen(true)}
                 onChange={(e) => setLongitude(e.target.value)}
               />
             </div>
@@ -274,6 +293,13 @@ export default function CreateOrderForm() {
           Zapisz
         </Button>
       </div>
+      {mapOpen && (
+        <div className={styles.MapCointaner} onClick={() => setMapOpen(false)}>
+          <div className={styles.Map} onClick={(e) => e.stopPropagation()}>
+            <MapPicker value={mapPosition} onSelect={handleMapSelect} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
