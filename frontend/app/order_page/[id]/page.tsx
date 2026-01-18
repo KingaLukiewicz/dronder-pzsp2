@@ -118,7 +118,10 @@ export default function OrderPage() {
                   <p>Adres: {offerData.location.address}</p>
                 ) : (
                   <>
-                    <div onClick={() => setMapOpen(true)}>
+                    <div
+                      onClick={() => setMapOpen(true)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <p>
                         Współrzędne: {offerData.location.geo_latitude},{" "}
                         {offerData.location.geo_longitude}

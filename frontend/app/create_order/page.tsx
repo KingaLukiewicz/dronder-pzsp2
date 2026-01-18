@@ -38,7 +38,6 @@ export default function CreateOrderForm() {
     setMapPosition(pos);
     setLatitude(pos.lat.toFixed(6));
     setLongitude(pos.lng.toFixed(6));
-    setMapOpen(false);
   };
 
   useEffect(() => {
