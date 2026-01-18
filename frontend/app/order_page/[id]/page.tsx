@@ -20,9 +20,6 @@ export default function OrderPage() {
   const params = useParams();
   const offerId = params.id;
 
-  const handleShowMap = () => setMapOpen(true);
-  const handleCloseMap = () => setMapOpen(false);
-
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
@@ -117,21 +114,23 @@ export default function OrderPage() {
             <div className={styles.Section}>
               <h2>Lokalizacja</h2>
               {offerData.location ? (
-                "address" in offerData.location ? (
+                offerData.location.address ? (
                   <p>Adres: {offerData.location.address}</p>
                 ) : (
                   <>
-                    <p onClick={handleShowMap}>
-                      Współrzędne: {offerData.location.geo_latitude},{" "}
-                      {offerData.location.geo_longitude}, Promień:{" "}
-                      {offerData.location.radius} m
-                    </p>
+                    <div onClick={() => setMapOpen(true)}>
+                      <p>
+                        Współrzędne: {offerData.location.geo_latitude},{" "}
+                        {offerData.location.geo_longitude}
+                      </p>
+                      <p>Promień: {offerData.location.radius} m</p>
+                    </div>
                     {mapOpen &&
                       offerData.location.geo_latitude &&
                       offerData.location.geo_longitude && (
                         <div
                           className={styles.MapCointaner}
-                          onClick={handleCloseMap}
+                          onClick={() => setMapOpen(false)}
                         >
                           <div
                             className={styles.Map}
