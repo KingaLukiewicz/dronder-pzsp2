@@ -83,11 +83,15 @@ export default function Profile() {
           throw new Error(`Błąd backendu: ${res.status}`);
         }
         const data: UserdataGet = await res.json();
-        sessionStorage.setItem("role", data.role);
-        if (data.role === "admin") {
-          router.push("/admin");
+        if (!userId) {
+          sessionStorage.setItem("role", data.role);
+          if (data.role === "admin") {
+            router.push("/admin");
+          }
+          sessionStorage.setItem("email", data.email);
+          sessionStorage.setItem("id", `${data.user_id}`);
         }
-        sessionStorage.setItem("email", data.email);
+
         setUserData(data);
       } catch (error) {
         console.error("Failed to fetch", error);
@@ -178,7 +182,7 @@ export default function Profile() {
                   userData.products.length > 0 && (
                     <>
                       <h3>Oferowane produkty</h3>
-                      <p>{userData.products.join(', ')}</p>
+                      <p>{userData.products.join(", ")}</p>
                     </>
                   )}
 
@@ -195,8 +199,8 @@ export default function Profile() {
                         "Sobota",
                         "Niedziela",
                       ]
-                        .filter(day => weekdays[day])
-                        .join(', ')}
+                        .filter((day) => weekdays[day])
+                        .join(", ")}
                     </p>
                   </>
                 )}
@@ -225,8 +229,8 @@ export default function Profile() {
                               totalReviews % 100 >= 12 &&
                               totalReviews % 100 <= 14
                             )
-                            ? "oceny"
-                            : "ocen"}
+                          ? "oceny"
+                          : "ocen"}
                       </p>
                     </div>
                   </>

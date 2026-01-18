@@ -28,7 +28,10 @@ type Props = PropsWithChildren & {
   deadline: string;
 };
 
-type OrderPillComponent = React.FC<Props> & { Status: React.FC };
+type OrderPillComponent = React.FC<Props> & {
+  Status: React.FC;
+  Rate: React.FC;
+};
 
 const OrderPill: OrderPillComponent = ({ children, id, title, deadline }) => {
   const router = useRouter();
@@ -54,10 +57,30 @@ const OrderPill: OrderPillComponent = ({ children, id, title, deadline }) => {
   );
 };
 
+OrderPill.Rate = function OrderPillRate() {
+  const { id } = useOrderPillContext();
+  const router = useRouter();
+
+  const handleReroute = async () => {
+    router.push(`/rate_order/${id}`);
+  };
+
+  return (
+    <div style={{ marginTop: "10px" }}>
+      <Button
+        variant="outlined"
+        onClick={handleReroute}
+        className={styles.OrderPillButton}
+      >
+        Oceń zlecenie
+      </Button>
+    </div>
+  );
+};
+
 OrderPill.Status = function OrderPillStatus() {
   const { id } = useOrderPillContext();
   const [loading, setLoading] = React.useState(false);
-  const router = useRouter();
 
   const handleFinalize = async () => {
     if (!confirm("Czy na pewno chcesz zakończyć to zlecenie?")) return;
@@ -67,7 +90,7 @@ OrderPill.Status = function OrderPillStatus() {
       const token = sessionStorage.getItem("token");
       if (!token) throw new Error("Brak tokena. Zaloguj się ponownie.");
 
-      const res = await fetch(`${BASE_URL}/matches/finalized/${id}`, {
+      const res = await fetch(`${BASE_URL}/offer/finalized/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +104,6 @@ OrderPill.Status = function OrderPillStatus() {
       }
 
       alert("Zlecenie zostało zakończone!");
-      router.push(`/rate_order/${id}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
