@@ -3,16 +3,22 @@
 import Header from "@/app/components/header/page";
 import Sidebar from "@/app/components/sidebar/page";
 import styles from "./page.module.css";
+import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { OfferForm } from "@/app/types";
 import { BASE_URL } from "@/app/constants";
 import { useParams } from "next/navigation";
 
+const MapPicker = dynamic(() => import("../../components/map_picker"), {
+  ssr: false,
+});
+
 export default function OrderPage() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [offerData, setOfferData] = useState<OfferForm | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
   const params = useParams();
-  const offerId = params.id?.[0];
+  const offerId = params.id;
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -63,18 +69,24 @@ export default function OrderPage() {
             <div className={styles.Section}>
               <h2>Strony zlecenia</h2>
               <p>
-                Operator: {offerData.operator_id ? (
+                Operator:{" "}
+                {offerData.operator_id ? (
                   <a href={`/profile/${offerData.operator_id}`}>
                     {offerData.operator_name}
                   </a>
-                ) : "-"}
+                ) : (
+                  "-"
+                )}
               </p>
               <p>
-                Zleceniodawca: {offerData.client_id ? (
+                Zleceniodawca:{" "}
+                {offerData.client_id ? (
                   <a href={`/profile/${offerData.client_id}`}>
                     {offerData.client_name}
                   </a>
-                ) : "-"}
+                ) : (
+                  "-"
+                )}
               </p>
             </div>
 
@@ -102,14 +114,41 @@ export default function OrderPage() {
             <div className={styles.Section}>
               <h2>Lokalizacja</h2>
               {offerData.location ? (
-                "address" in offerData.location ? (
+                offerData.location.address ? (
                   <p>Adres: {offerData.location.address}</p>
                 ) : (
-                  <p>
-                    Współrzędne: {offerData.location.geo_latitude},{" "}
-                    {offerData.location.geo_longitude}, Promień:{" "}
-                    {offerData.location.radius} m
-                  </p>
+                  <>
+                    <div
+                      onClick={() => setMapOpen(true)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <p>
+                        Współrzędne: {offerData.location.geo_latitude},{" "}
+                        {offerData.location.geo_longitude}
+                      </p>
+                      <p>Promień: {offerData.location.radius} m</p>
+                    </div>
+                    {mapOpen &&
+                      offerData.location.geo_latitude &&
+                      offerData.location.geo_longitude && (
+                        <div
+                          className={styles.MapCointaner}
+                          onClick={() => setMapOpen(false)}
+                        >
+                          <div
+                            className={styles.Map}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MapPicker
+                              value={{
+                                lat: Number(offerData.location.geo_latitude),
+                                lng: Number(offerData.location.geo_longitude),
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                  </>
                 )
               ) : (
                 <p>-</p>

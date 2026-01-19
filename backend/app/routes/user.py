@@ -189,23 +189,36 @@ def post_userdata():
             user.location = Locations.model_validate(data.location)
         if data.phone_number:
             user.phone_number = data.phone_number
+
+        current_products = set(
+            session.exec(
+                select(OperatorProducts.offer_type_name).where(
+                    OperatorProducts.operator_id == user_id
+                )
+            ).all()
+        )
+        new_products = set()
         for product in data.products:
-            for operator_product in session.exec(
-                select(OfferTypes.name).where(OfferTypes.name == product)
-            ).all():
-                if (
-                    session.exec(
-                        select(OperatorProducts)
-                        .where(OperatorProducts.operator_id == user_id)
-                        .where(OperatorProducts.offer_type_name == operator_product)
-                    ).first()
-                    is None
-                ):
-                    session.add(
-                        OperatorProducts(
-                            operator_id=user_id, offer_type_name=operator_product
-                        )
-                    )
+            if session.exec(select(OfferTypes.name).where(OfferTypes.name == product)).first():
+                new_products.add(product)
+
+        to_add = new_products - current_products
+        to_remove = current_products - new_products
+
+        rows_to_remove = session.exec(
+            select(OperatorProducts).where(
+                OperatorProducts.operator_id == user_id,
+                OperatorProducts.offer_type_name.in_(to_remove)  # type: ignore
+            )
+        ).all()
+
+        for row in rows_to_remove:
+            session.delete(row)
+
+        session.add_all(
+            OperatorProducts(operator_id=user_id, offer_type_name=product)
+            for product in to_add
+        )
 
         if data.role:
             match data.role:  # type: ignore
